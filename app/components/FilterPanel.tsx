@@ -33,7 +33,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
     'ديانة اسلامية', 'لغة', 'كيمياء'
   ];
 
-  const bacLiterarySubjects = [...ninthSubjects, 'فلسفة'];
+  const bacLiterarySubjects = ['ديانة اسلامية','لغة','عربي','تاريخ','جغرافيا', 'فلسفة'];
 
   const types = ['دورات', 'اوراق عمل', 'اختبارات', 'ملخصات', 'مناهج'];
   const years = Array.from({length: 11}, (_, i) => `${2015 + i}`);
@@ -69,6 +69,18 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
     setIsTypesOpen(!isTypesOpen);
     setIsYearsOpen(false);
     setIsSubjectsOpen(false);
+  };
+
+  // دالة لتحديد لون الزر بناءً على ما إذا كان هناك خيار محدد
+  const getButtonClass = (hasSelection: boolean, isOpen: boolean) => {
+    const baseClass = "w-full flex items-center justify-between p-2 rounded-lg text-sm";
+    if (hasSelection) {
+      return `${baseClass} bg-green-100 text-green-600 border border-green-300`;
+    }
+    if (isOpen) {
+      return `${baseClass} bg-gray-100 text-gray-700`;
+    }
+    return `${baseClass} bg-gray-50 text-gray-600`;
   };
 
   return (
@@ -110,12 +122,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         {/* السنة */}
         <div className="mb-2">
           <button 
-            className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+            className={getButtonClass(!!selectedYear, isYearsOpen)}
             onClick={toggleYears}
           >
-            <span className="text-sm text-gray-600">
-              {selectedYear || 'اختر السنة'}
-            </span>
+            <span>{selectedYear || 'اختر السنة'}</span>
             {isYearsOpen ? <FiChevronUp /> : <FiChevronDown />}
           </button>
           
@@ -145,12 +155,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         {selectedCategory && (
           <div className="mb-2">
             <button 
-              className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+              className={getButtonClass(!!selectedSubject, isSubjectsOpen)}
               onClick={toggleSubjects}
             >
-              <span className="text-sm text-gray-600">
-                {selectedSubject || 'اختر المادة'}
-              </span>
+              <span>{selectedSubject || 'اختر المادة'}</span>
               {isSubjectsOpen ? <FiChevronUp /> : <FiChevronDown />}
             </button>
             
@@ -180,12 +188,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         {/* التصنيف */}
         <div className="mb-2">
           <button 
-            className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+            className={getButtonClass(!!selectedType, isTypesOpen)}
             onClick={toggleTypes}
           >
-            <span className="text-sm text-gray-600">
-              {selectedType || 'اختر التصنيف'}
-            </span>
+            <span>{selectedType || 'اختر التصنيف'}</span>
             {isTypesOpen ? <FiChevronUp /> : <FiChevronDown />}
           </button>
           

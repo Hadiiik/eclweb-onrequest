@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import FileUploadForm from "../components/FileUploadForm";
 export default function page(){
     return(
-        <div>
+        <div className="flex flex-col gap-8">
             <Header/>
             <FileUploadForm/>
         </div>
