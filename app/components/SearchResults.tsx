@@ -64,3 +64,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
 };
 
 export default SearchResults;
+
+
+
+

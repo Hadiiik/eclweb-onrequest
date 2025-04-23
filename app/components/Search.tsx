@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FiSearch, FiFilter } from 'react-icons/fi';
-import FilterPanel from './FilterPanel'; // تأكد من المسار الصحيح
+import FilterPanel from './FilterPanel'; 
 
 interface SearchProps {
   placeholder?: string;
@@ -12,12 +12,14 @@ interface SearchProps {
     subject: string;
     type: string;
   }) => void;
+  onType? : (text:string) => void
 }
 
 const Search: React.FC<SearchProps> = ({
   placeholder = 'ابحث هنا...',
   onSearch,
   onFilter,
+  onType
 }) => {
   const [query, setQuery] = useState('');
   const [showFilterPanel, setShowFilterPanel] = useState(false);
@@ -39,6 +41,7 @@ const Search: React.FC<SearchProps> = ({
     onFilter?.(filters);
     setShowFilterPanel(false);
   };
+  
 
   return (
     <>
@@ -50,7 +53,10 @@ const Search: React.FC<SearchProps> = ({
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value)
+              onType?.(e.target.value)
+            }}
             placeholder={placeholder}
             className="w-full py-2 px-4 pr-20 rounded-full border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 transition-all duration-200 md:text-base text-sm"
             dir="rtl"

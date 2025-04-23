@@ -19,13 +19,21 @@ export async function POST(req: NextRequest){
 
     const LIMIT = 10; // عدد العناصر في الصفحة`
 
-    const { data, error } = await supabase
-  .from("files_info")
-  .select("*")
-  .ilike("file_name", `%${search_bar_query}%`)
-  .contains("categories", filters)
-  .range(parseInt(page) * LIMIT, (parseInt(page) + 1) * LIMIT - 1);
+    const query = supabase
+        .from("files_info")
+        .select("*")
+        .ilike("file_name", `%${search_bar_query}%`);
 
+    if (filters.length > 0) {
+        query.contains("categories", filters);
+    }
+
+    const { data, error } = await query.range(
+        parseInt(page) * LIMIT,
+        (parseInt(page) + 1) * LIMIT - 1
+    );
+    console.log(data)
+    console.log(error)
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
