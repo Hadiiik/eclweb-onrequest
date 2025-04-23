@@ -22,21 +22,11 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
   const [isTypesOpen, setIsTypesOpen] = useState(false);
   const [isYearsOpen, setIsYearsOpen] = useState(false);
 
-  // المواد لكل مرحلة
-  const ninthSubjects = [
-    'عربي', 'علوم', 'رياضيات', 'لغة', 'ديانة اسلامية', 
-    'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ'
-  ];
-
-  const bacScientificSubjects = [
-    'رياضيات', 'فيزياء', 'علوم', 'عربي',
-    'ديانة اسلامية', 'لغة', 'كيمياء'
-  ];
-
-  const bacLiterarySubjects = ['ديانة اسلامية','لغة','عربي','تاريخ','جغرافيا', 'فلسفة'];
-
+  const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'لغة', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ'];
+  const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'لغة', 'كيمياء'];
+  const bacLiterarySubjects = ['ديانة اسلامية', 'لغة', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة'];
   const types = ['دورات', 'اوراق عمل', 'اختبارات', 'ملخصات', 'مناهج'];
-  const years = Array.from({length: 11}, (_, i) => `${2015 + i}`);
+  const years = Array.from({ length: 11 }, (_, i) => `${2015 + i}`);
 
   const handleApply = () => {
     onApplyFilters({
@@ -71,30 +61,13 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
     setIsSubjectsOpen(false);
   };
 
-  // دالة لتحديد لون الزر بناءً على ما إذا كان هناك خيار محدد
-  const getButtonClass = (hasSelection: boolean, isOpen: boolean) => {
-    const baseClass = "w-full flex items-center justify-between p-2 rounded-lg text-sm";
-    if (hasSelection) {
-      return `${baseClass} bg-green-100 text-green-600 border border-green-300`;
-    }
-    if (isOpen) {
-      return `${baseClass} bg-gray-100 text-gray-700`;
-    }
-    return `${baseClass} bg-gray-50 text-gray-600`;
-  };
-
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 shadow-md">
       <div className="bg-white p-3 rounded-xl shadow-2xl w-full max-w-[95%] md:max-w-md md:mx-2 border border-green-100 px-5 mx-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-bold text-green-600">فلاتر البحث</h2>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-green-600 p-1"
-          >
-            ✕
-          </button>
+          <button onClick={onClose} className="text-gray-500 hover:text-green-600 p-1">✕</button>
         </div>
 
         {/* الفئة */}
@@ -105,12 +78,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                 key={category}
                 onClick={() => {
                   setSelectedCategory(category);
-                  setSelectedSubject('');
+                  setSelectedSubject(''); // إعادة تعيين المادة عند تغيير الفئة
                 }}
                 className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
-                  selectedCategory === category
-                    ? 'bg-green-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  selectedCategory === category ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 {category}
@@ -119,45 +90,11 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           </div>
         </div>
 
-        {/* السنة */}
-        <div className="mb-2">
-          <button 
-            className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
-            onClick={toggleYears}
-          >
-            <span className="text-sm text-gray-600">
-              {selectedYear || 'اختر السنة'}
-            </span>
-            {isYearsOpen ? <FiChevronUp /> : <FiChevronDown />}
-          </button>
-          
-          {isYearsOpen && (
-            <div className="grid grid-cols-3 gap-1.5 mt-2">
-              {years.map((year) => (
-                <button
-                  key={year}
-                  onClick={() => {
-                    setSelectedYear(year);
-                    setIsYearsOpen(false);
-                  }}
-                  className={`p-1.5 rounded-lg text-xs ${
-                    selectedYear === year
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {year}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
         {/* المواد */}
         {selectedCategory && (
           <div className="mb-2">
             <button 
-              className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+              className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedSubject ? 'bg-green-100' : (isSubjectsOpen ? 'bg-gray-50' : 'bg-gray-50')}`}
               onClick={toggleSubjects}
             >
               <span>{selectedSubject || 'اختر المادة'}</span>
@@ -174,9 +111,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                       setIsSubjectsOpen(false);
                     }}
                     className={`p-1.5 rounded-lg text-xs ${
-                      selectedSubject === subject
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      selectedSubject === subject ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     {subject}
@@ -190,7 +125,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         {/* السنة */}
         <div className="mb-2 ">
           <button 
-            className="w-full flex items-center justify-between p-2 bg-gray-100 rounded-lg "
+            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedYear ? 'bg-green-100' : (isYearsOpen ? 'bg-gray-50' : 'bg-gray-50')}`}
             onClick={toggleYears}
           >
             <span className="text-sm text-gray-600">
@@ -209,9 +144,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                     setIsYearsOpen(false);
                   }}
                   className={`p-1.5 rounded-lg text-xs ${
-                    selectedYear === year
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    selectedYear === year ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {year}
@@ -221,11 +154,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           )}
         </div>
 
-        
         {/* التصنيف */}
         <div className="mb-2">
           <button 
-            className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedType ? 'bg-green-100' : (isTypesOpen ? 'bg-gray-50' : 'bg-gray-50')}`}
             onClick={toggleTypes}
           >
             <span>{selectedType || 'اختر التصنيف'}</span>
@@ -242,9 +174,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                     setIsTypesOpen(false);
                   }}
                   className={`p-1.5 rounded-lg text-xs ${
-                    selectedType === type
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    selectedType === type ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {type}
@@ -256,18 +186,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
 
         {/* أزرار التطبيق */}
         <div className="flex justify-between gap-2 mt-3">
-          <button
-            onClick={handleApply}
-            className="flex-1 py-2 rounded-lg text-sm bg-green-500 text-white hover:bg-green-600"
-          >
-            تطبيق الفلاتر
-          </button>
-          <button
-            onClick={onClose}
-            className="flex-1 py-2 rounded-lg text-sm bg-gray-100 text-gray-600 hover:bg-gray-200"
-          >
-            إلغاء
-          </button>
+          <button onClick={handleApply} className="flex-1 py-2 rounded-lg text-sm bg-green-500 text-white hover:bg-green-600">تطبيق الفلاتر</button>
+          <button onClick={onClose} className="flex-1 py-2 rounded-lg text-sm bg-gray-100 text-gray-600 hover:bg-gray-200">إلغاء</button>
         </div>
       </div>
     </div>
