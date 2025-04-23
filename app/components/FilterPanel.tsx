@@ -72,8 +72,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-white p-3 rounded-xl shadow-2xl w-full max-w-[95%] md:max-w-md mx-2 border border-green-100">
+    <div className="fixed inset-0 flex items-center justify-center z-50 shadow-md">
+      <div className="bg-white p-3 rounded-xl shadow-2xl w-full max-w-[95%] md:max-w-md md:mx-2 border border-green-100 px-5 mx-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-bold text-green-600">فلاتر البحث</h2>
@@ -107,45 +107,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           </div>
         </div>
 
-        {/* السنة */}
-        <div className="mb-2">
-          <button 
-            className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
-            onClick={toggleYears}
-          >
-            <span className="text-sm text-gray-600">
-              {selectedYear || 'اختر السنة'}
-            </span>
-            {isYearsOpen ? <FiChevronUp /> : <FiChevronDown />}
-          </button>
-          
-          {isYearsOpen && (
-            <div className="grid grid-cols-3 gap-1.5 mt-2">
-              {years.map((year) => (
-                <button
-                  key={year}
-                  onClick={() => {
-                    setSelectedYear(year);
-                    setIsYearsOpen(false);
-                  }}
-                  className={`p-1.5 rounded-lg text-xs ${
-                    selectedYear === year
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {year}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
 
         {/* المواد */}
         {selectedCategory && (
           <div className="mb-2">
             <button 
-              className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+              className="w-full flex items-center justify-between p-2 bg-gray-100 rounded-lg"
               onClick={toggleSubjects}
             >
               <span className="text-sm text-gray-600">
@@ -177,10 +144,45 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           </div>
         )}
 
+        {/* السنة */}
+        <div className="mb-2 ">
+          <button 
+            className="w-full flex items-center justify-between p-2 bg-gray-100 rounded-lg "
+            onClick={toggleYears}
+          >
+            <span className="text-sm text-gray-600">
+              {selectedYear || 'اختر السنة'}
+            </span>
+            {isYearsOpen ? <FiChevronUp /> : <FiChevronDown />}
+          </button>
+          
+          {isYearsOpen && (
+            <div className="grid grid-cols-3 gap-1.5 mt-2">
+              {years.map((year) => (
+                <button
+                  key={year}
+                  onClick={() => {
+                    setSelectedYear(year);
+                    setIsYearsOpen(false);
+                  }}
+                  className={`p-1.5 rounded-lg text-xs ${
+                    selectedYear === year
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        
         {/* التصنيف */}
         <div className="mb-2">
           <button 
-            className="w-full flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+            className="w-full flex items-center justify-between p-2 bg-gray-100 rounded-lg"
             onClick={toggleTypes}
           >
             <span className="text-sm text-gray-600">

@@ -5,22 +5,27 @@
   --foreground: #171717;
 }
 
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+input:hover {
+  cursor: text;
+  caret-color: black; /* Ensures the text cursor is black */
+  background-color: #f0f0f0; /* Adjust the background color on hover */
+  color: #000000; /* Adjust the text color on hover */
+}
+
+button:hover {
+  cursor: pointer;
 }

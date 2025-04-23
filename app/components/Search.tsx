@@ -58,7 +58,7 @@ const Search: React.FC<SearchProps> = ({
           
           <button
             type="submit"
-            className="absolute left-3 text-green-600 hover:text-green-800 focus:outline-none"
+            className="absolute left-3 text-green-600 hover:text-green-700 focus:outline-none"
             aria-label="بحث"
           >
             <FiSearch className="md:size-5 size-4" />
@@ -67,7 +67,7 @@ const Search: React.FC<SearchProps> = ({
           <button
             type="button"
             onClick={handleFilterClick}
-            className="absolute left-10 text-green-600 hover:text-green-800 focus:outline-none"
+            className="absolute left-10 text-green-600 hover:text-green-700 focus:outline-none"
             aria-label="فلتر"
           >
             <FiFilter className="md:size-5 size-4" />
