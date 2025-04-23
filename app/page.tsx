@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './components/Header';
 import Search from './components/Search';
+import SearchResults from './components/SearchResults';
 
 
 export default function Home() {
@@ -9,10 +10,8 @@ export default function Home() {
       <Header />
       <div className="px-4"> {/* إضافة padding جانبي للبحث على الهواتف */}
         <Search />
-        <footer>
-          <a href='/DataEnterance'>إنقلع الى صفحة الإدخال</a>
-        </footer>
       </div>
+      <SearchResults results={[]} />
     </div>
   );
 }

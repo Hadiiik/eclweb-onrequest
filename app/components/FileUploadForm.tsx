@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from 'react';
 import FilterPanel from './FilterPanel'; // تأكد من تعديل المسار حسب مكان المكون
+import { uploadFileInfo } from '@/client/helpers/upload_file';
+import { uploadFakeFiles } from '@/client/helpers/test';
 
 const FileUploadForm = () => {
   const [fileName, setFileName] = useState('');
@@ -9,9 +11,30 @@ const FileUploadForm = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log({ fileName, fileUrl, fileDescription, selectedCategories });
+    // console.log({ fileName, fileUrl, fileDescription, selectedCategories });
+    // const result = await uploadFileInfo({
+    //   "file_name": fileName,
+    //   "file_description": fileDescription,
+    //   "categories": selectedCategories,
+    //   "file_url": fileUrl,
+    // });
+    // if (result.success) {
+    //   alert('تم حفظ الملف بنجاح!');
+    //   // إعادة تعيين الحقول بعد النجاح
+    //   setFileName('');
+    //   setFileUrl('');
+    //   setFileDescription('');
+    //   setSelectedCategories([]);
+    // } else {
+    //   alert(`فشل حفظ الملف: ${result.error}`);
+    // }
+
+
+    uploadFakeFiles();
+
+
   };
 
   const handleApplyFilters = (filters: {
