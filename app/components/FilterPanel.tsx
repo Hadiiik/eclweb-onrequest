@@ -11,6 +11,7 @@ interface FilterPanelProps {
     type: string;
     year?: string;
   }) => void;
+  isSelected?: boolean;
 }
 
 const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) => {
