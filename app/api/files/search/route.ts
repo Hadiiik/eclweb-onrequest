@@ -14,9 +14,19 @@ export async function POST(req: NextRequest){
     if (rateLimitResponse) return rateLimitResponse;
 
     const req_body: SearchQyery = await req.json();
-    let search_bar_query = sanitizeInput(req_body.search_bar_query);
-    const filters = req_body.filters.map((filter) => sanitizeInput(filter));
+    const search_bar_query = sanitizeInput(req_body.search_bar_query);
 
+    if (search_bar_query.length > 100) {
+        return NextResponse.json({ data: [] }, { status: 200 });
+    }
+    if(search_bar_query.length < 3  && req_body.filters.length === 0) {
+        return NextResponse.json({ data:[]}, { status: 200 });
+    }
+    
+    const filters = req_body.filters.map((filter) => sanitizeInput(filter));
+    if(filters.length > 10) {
+        return NextResponse.json({ data: "Too many filters" }, { status: 200 });
+    }
 
 
     if(search_bar_query.trim() === ""){
