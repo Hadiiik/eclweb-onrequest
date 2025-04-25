@@ -1,10 +1,10 @@
-import React from 'react';
 import { FaFilePdf, FaDownload } from 'react-icons/fa';
 
 export interface FileData {
   fileName: string;
   fileUrl: string;
   description?: string;
+  filters? : string[];
 }
 
 interface SearchResultsProps {
@@ -31,10 +31,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
             {/* زر التحميل على اليسار */}
             <a
               href={result.fileUrl}
-              target="_blank"
               rel="noopener noreferrer"
               className="flex items-center px-2 py-1 text-xs bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
-              download
             >
               <FaDownload className="ml-1" size={10} />
             </a>

@@ -45,12 +45,14 @@ const SearchContainer = () => {
             file_name: string;
             file_description?: string;
             file_url: string;
+            categories?: string[];
         };
 
         const formattedData: FileData[] = data.map((item: SearchResultItem) => ({
             fileName: item.file_name,
             description: item.file_description || "",
-            Url: item.file_url,
+            fileUrl: item.file_url,
+            filters: item.categories || []
         }));
         setResult(formattedData);
         setLoading(false);
