@@ -8,16 +8,23 @@ export function generateSimilarWords(search_query: string): Set<string> {
     for (const word of words) {
 
         // إضافة الكلمة مع "ال" التعريف إذا لم تكن موجودة
-        if (!word.startsWith("ال")) {
-            if (word.length > 1) 
-            similarWords.add("ال" + word);
+        const baseWord = word.endsWith("ة") || word.endsWith("ه") ? word.slice(0, -1) : word;
+
+        // إضافة الكلمة مع "ال" التعريف إذا لم تكن موجودة
+        if (!baseWord.startsWith("ال")) {
+            if (baseWord.length > 1) 
+            similarWords.add("ال" + baseWord);
         }
 
         // إضافة الكلمة بدون "ال" التعريف إذا كانت موجودة
-        if (word.startsWith("ال")) {
-            if (word.length > 1) 
-            similarWords.add(word.substring(2));
+        if (baseWord.startsWith("ال")) {
+            if (baseWord.length > 1) 
+            similarWords.add(baseWord.substring(2));
         }
+
+        // إضافة الكلمة الأساسية بعد إزالة "ة" أو "ه" إذا كانت موجودة
+        similarWords.add(baseWord);
+        // إزالة "ة" أو "ه" من آخر الكلمة إذا كانت موجودة
 
         // إضافة الكلمات المشابهة
         for (let i = 0; i < word.length; i++) {
@@ -33,6 +40,5 @@ export function generateSimilarWords(search_query: string): Set<string> {
             }
         }
     }
-
     return similarWords;
 }

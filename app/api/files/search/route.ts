@@ -45,7 +45,6 @@ export async function POST(req: NextRequest){
     
 
     const similarWords = generateSimilarWords(search_bar_query);
-    // console.log(similarWords)
     const f = Array.from(similarWords)
     .flatMap(word => [
         `file_name.ilike.%${word}%`,
@@ -59,6 +58,7 @@ export async function POST(req: NextRequest){
         .from("files_info")
         .select("*")
         .or(f);
+
 
     if (filters.length > 0) {
         query.contains("categories", filters);
