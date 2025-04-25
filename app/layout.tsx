@@ -19,7 +19,7 @@ const NotoKufiArabic = Noto_Kufi_Arabic({
 
 
 export const metadata: Metadata = {
-  title: "ُECL",
+  title: "ECL",
   description: "نحو التطور و الإبداع",
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-        <link rel="icon"  href="/ecl_logo.png"></link>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
       <body
         className={`${geistSans.variable} ${geistMono.variable}  ${NotoKufiArabic.className} antialiased`}
       >
