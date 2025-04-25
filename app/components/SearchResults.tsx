@@ -41,12 +41,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
             
             {/* المحتوى منحاز لليمين */}
             <div className="flex items-center">
-              <div className="text-right flex-1">
+              <div className="text-right flex-1 min-w-0">
                 <h3 className="text-sm font-medium text-gray-800 line-clamp-1">
                   {result.fileName}
                 </h3>
                 {result.description && (
-                  <p className="text-gray-500 text-xs line-clamp-1">
+                  <p className="text-gray-500 text-xs whitespace-normal overflow-visible">
                     {result.description}
                   </p>
                 )}

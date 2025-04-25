@@ -26,7 +26,7 @@ const SearchContainer = () => {
         console.log(query)
         onSearch(query)
         
-    },Filters)
+    },[Filters])
 
     const onSearch = async (q:string)=>{
         setLoading(true);
