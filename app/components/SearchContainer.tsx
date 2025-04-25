@@ -18,6 +18,7 @@ const SearchContainer = () => {
     const [results,setResult] = useState<FileData[]>([]);
     const [loading,setLoading] = useState(false);
     const [query,setQuery] = useState("");
+    const [error_message, setError_message] = useState("يرجى إدخال  البحث لعرض النتائج.");
 
 
     useEffect(()=>{
@@ -36,11 +37,15 @@ const SearchContainer = () => {
             page : "0"
         });
         if(!result.success){
+            setError_message("لا توجد نتائج مطابقة للبحث");
             alert("error")
             setLoading(false);
             return;
         }
         const data = result.data;
+        if (data.length === 0) 
+            setError_message("لا توجد نتائج مطابقة للبحث");
+
         type SearchResultItem = {
             file_name: string;
             file_description?: string;
@@ -83,11 +88,12 @@ const SearchContainer = () => {
             onSearch={onSearch} 
             onFilter={onFilter}
             onType={onType}
+            isSelectedFilters={Filters.length > 0} 
         />
     </div>
     <div className="p-4 my-4 mx-3"> {/* إضافة هوامش داخلية وخارجية مناسبة */} 
         {!loading&&
-            <SearchResults results={results} />
+            <SearchResults results={results}  error_message={error_message}/>
         }
         {loading&&
             <SearchResultsSkeleton />

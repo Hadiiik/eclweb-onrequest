@@ -12,14 +12,16 @@ interface SearchProps {
     subject: string;
     type: string;
   }) => void;
-  onType? : (text:string) => void
+  onType? : (text:string) => void;
+  isSelectedFilters?: boolean; 
 }
 
 const Search: React.FC<SearchProps> = ({
   placeholder = 'ابحث هنا...',
   onSearch,
   onFilter,
-  onType
+  onType,
+  isSelectedFilters=false,
 }) => {
   const [query, setQuery] = useState('');
   const [showFilterPanel, setShowFilterPanel] = useState(false);
@@ -76,7 +78,15 @@ const Search: React.FC<SearchProps> = ({
             className="absolute left-10 text-green-600 hover:text-green-700 focus:outline-none"
             aria-label="فلتر"
           >
-            <FiFilter className="md:size-5 size-4" />
+            <div className="relative inline-block">
+            {!isSelectedFilters&&<FiFilter className="md:size-5 size-4" />}
+            {isSelectedFilters && (
+            <>
+              <FiFilter className="md:size-5 size-4" />
+              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+            </>
+            )}
+            </div>
           </button>
         </div>
       </form>

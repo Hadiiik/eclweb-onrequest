@@ -9,13 +9,16 @@ export interface FileData {
 
 interface SearchResultsProps {
   results: FileData[];
+  error_message?:string
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ results ,error_message}) => {
   if (!results || results.length === 0) {
     return (
       <div className="text-center py-4 text-gray-500 text-sm">
-        لا توجد نتائج مطابقة للبحث
+        {
+          error_message||"لا توجد نتائج مطابقة للبحث"
+        }
       </div>
     );
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 interface FilterPanelProps {
@@ -14,6 +14,8 @@ interface FilterPanelProps {
 }
 
 const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) => {
+
+
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
