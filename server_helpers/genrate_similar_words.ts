@@ -3,7 +3,7 @@ import { similarChars } from "@/constants/similar_chars";
 export function generateSimilarWords(search_query: string): Set<string> {
     const similarWords = new Set<string>();
     let words = search_query.split(' '); // تقسيم البحث إلى كلمات فردية
-    words = words.filter(ele => ele !== " " && ele !== "");
+    words = words.filter(ele => ele !== " " && ele !== "" && ele.length > 2);
     for (let i = 0; i < words.length; i++) similarWords.add(words[i]);
     for (const word of words) {
 
