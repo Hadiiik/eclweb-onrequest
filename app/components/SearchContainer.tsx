@@ -50,6 +50,7 @@ const SearchContainer = () => {
             file_name: string;
             file_description?: string;
             file_url: string;
+            created_at?: string;
             categories?: string[];
         };
 
@@ -57,7 +58,8 @@ const SearchContainer = () => {
             fileName: item.file_name,
             description: item.file_description || "",
             fileUrl: item.file_url,
-            filters: item.categories || []
+            filters: item.categories || [],
+            created_at:item.created_at||""
         }));
         setResult(formattedData);
         setLoading(false);
