@@ -38,7 +38,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
             onCancel={() => setIsOpen(false)}
             onConfirm={() => {
                 // Handle delete confirmation
-                
+
                 setIsOpen(false);
             }}
             fileid={""}
@@ -135,7 +135,6 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   fileName,
   onCancel,
   onConfirm,
-  fileid
 }) => {
   if (!isOpen) return null;
 

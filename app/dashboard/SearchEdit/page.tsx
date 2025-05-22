@@ -1,5 +1,6 @@
 "use client";
 import Header from "@/app/components/Header";
+import { useCallback } from "react";
 import Search from "@/app/components/Search";
 import { fetchSearchResults } from "@/client/helpers/search_files";
 import { useState, useRef, useEffect } from "react";
@@ -35,22 +36,8 @@ const SearchContainer = () => {
     const previousQuery = useRef<string>("");
     const previousFilters = useRef<string[]>([]);
 
-    useEffect(() => {
-        // Avoid re-fetching if filters and query haven’t changed
-        if (
-            Filters.length === 0 &&
-            results.length === 0
-        ) return;
 
-        const filtersChanged = JSON.stringify(previousFilters.current) !== JSON.stringify(Filters);
-        const queryChanged = previousQuery.current !== query;
-        if (filtersChanged || queryChanged) {
-            onSearch(query);
-        }
-
-    }, [Filters]);
-
-    const onSearch = async (q: string) => {
+    const onSearch = useCallback(async (q: string) => {
         const filtersChanged = JSON.stringify(previousFilters.current) !== JSON.stringify(Filters);
         const queryChanged = previousQuery.current !== q;
 
@@ -74,22 +61,43 @@ const SearchContainer = () => {
         if (data.length === 0)
             setError_message("لا توجد نتائج مطابقة للبحث");
 
-        const formattedData: FileData[] = data.map((item: any) => ({
-            fileName: item.file_name,
-            description: item.file_description || "",
-            fileUrl: item.file_url,
-            filters: item.categories || [],
-            created_at: item.created_at || ""
-        }));
+       const formattedData: FileData[] = data.map((item: {
+        file_name: string;
+        file_description?: string;
+        file_url: string;
+        categories?: string[];
+        created_at?: string;
+    }) => ({
+        fileName: item.file_name,
+        description: item.file_description || "",
+        fileUrl: item.file_url,
+        filters: item.categories || [],
+        created_at: item.created_at || ""
+    }));
+
 
         setResult(formattedData);
         setLoading(false);
 
-
         // Update refs
         previousQuery.current = q;
         previousFilters.current = [...Filters];
-    };
+    }, [Filters]);
+
+    useEffect(() => {
+        // Avoid re-fetching if filters and query haven’t changed
+        if (
+            Filters.length === 0 &&
+            results.length === 0
+        ) return;
+
+        const filtersChanged = JSON.stringify(previousFilters.current) !== JSON.stringify(Filters);
+        const queryChanged = previousQuery.current !== query;
+        if (filtersChanged || queryChanged) {
+            onSearch(query);
+        }
+
+    }, [Filters, onSearch, query, results.length]);
 
     const onFilter = (filters: filters) => {
         const filteredValues = Object.values(filters).filter(value => value.trim() !== "");

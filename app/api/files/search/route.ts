@@ -26,7 +26,7 @@ function extractEducationalFilters(query: string): string[] {
     const hasLiterary = /(ادبي|أدبي)/.test(normalizedQuery);
     const hasTase3 = /تاسع/.test(normalizedQuery);
 
-    let extraFilters: string[] = [];
+    const extraFilters: string[] = [];
 
     if ((hasBacWord || hasScientific || hasLiterary) && hasTase3) {
         // يوجد تضارب بين بكالوريا (علمي/أدبي) والتاسع، لا نضع أي منهما
@@ -77,8 +77,8 @@ function isOnlyFilterWords(query: string): boolean {
     // نقوم بتحليل الكلمات إلى تسلسل من العبارات المسموحة
     let i = 0;
     while (i < words.length) {
-        let single = words[i];
-        let pair = i + 1 < words.length ? `${words[i]} ${words[i + 1]}` : null;
+        const single = words[i];
+        const pair = i + 1 < words.length ? `${words[i]} ${words[i + 1]}` : null;
 
         if (pair && allowedWords.has(pair)) {
             i += 2;
@@ -99,6 +99,7 @@ export async function POST(req: NextRequest) {
 
     const req_body: SearchQyery = await req.json();
     let search_bar_query = sanitizeInput(req_body.search_bar_query);
+    if (search_bar_query.trim().length < 3) return NextResponse.json({ "data": [] }, { status: 200 });
 
 
     // استخراج الفلاتر الإضافية بناءً على البحث قبل التحقق من الفلاتر
