@@ -3,82 +3,178 @@ import { rateLimiterMiddleware } from "@/middleware/rateLimiterMiddleware";
 import { sanitizeInput } from "@/security/remove_injictions";
 import { generateSimilarWords } from "@/server_helpers/genrate_similar_words";
 import { NextRequest, NextResponse } from "next/server";
+
 type SearchQyery = {
     search_bar_query: string;
     filters: string[];
     page: string;
-
 }
-export async function POST(req: NextRequest){
+
+// استخراج الفلاتر بناءً على الكلمات في البحث
+
+
+//to do move fiters extracting from query to client side
+
+function extractEducationalFilters(query: string): string[] {
+    const normalizedQuery = query
+        .replace(/[أإآ]/g, "ا")
+        .replace(/[ة ه]/g, "ا")
+        .toLowerCase();
+
+    const hasBacWord = /(بكالوريا|بكلوريا)/.test(normalizedQuery);
+    const hasScientific = /علمي/.test(normalizedQuery);
+    const hasLiterary = /(ادبي|أدبي)/.test(normalizedQuery);
+    const hasTase3 = /تاسع/.test(normalizedQuery);
+
+    let extraFilters: string[] = [];
+
+    if ((hasBacWord || hasScientific || hasLiterary) && hasTase3) {
+        // يوجد تضارب بين بكالوريا (علمي/أدبي) والتاسع، لا نضع أي منهما
+        return [];
+    }
+
+    if (hasBacWord || hasScientific || hasLiterary) {
+        if (hasScientific) {
+            extraFilters.push("بكلوريا علمي");
+        }
+        if (hasLiterary) {
+            extraFilters.push('بكلوريا ادبي');
+        }
+        if (!hasScientific && !hasLiterary) {
+            // فقط بكالوريا بدون تحديد علمي/أدبي
+            extraFilters.push("بكلوريا علمي", "بكلوريا ادبي");
+        }
+    }
+
+    if (hasTase3) {
+        extraFilters.push("تاسع");
+    }
+
+    return extraFilters;
+}
+
+// التحقق إذا كانت الكلمات في البحث تحتوي فقط على الفلاتر
+function isOnlyFilterWords(query: string): boolean {
+    const normalized = query
+        .replace(/[أإآ]/g, "ا")
+        .replace(/[ةه]/g, "ا")
+        .toLowerCase()
+        .trim();
+
+    const words = normalized.split(/\s+/).filter(Boolean);
+
+    const allowedWords = new Set([
+        "بكلوريا",
+        "بكالوريا",
+        "بكلوريا علمي",
+        "بكالوريا علمي",
+        "بكلورياادبي",
+        "بكالوريا ادبي",
+        "ادبي",
+        "تاسع"
+    ]);
+
+    // نقوم بتحليل الكلمات إلى تسلسل من العبارات المسموحة
+    let i = 0;
+    while (i < words.length) {
+        let single = words[i];
+        let pair = i + 1 < words.length ? `${words[i]} ${words[i + 1]}` : null;
+
+        if (pair && allowedWords.has(pair)) {
+            i += 2;
+        } else if (allowedWords.has(single)) {
+            i += 1;
+        } else {
+            return false; // وجدنا كلمة أو عبارة غير مسموحة
+        }
+    }
+
+    return true;
+}
+
+
+export async function POST(req: NextRequest) {
     const rateLimitResponse = await rateLimiterMiddleware(req);
     if (rateLimitResponse) return rateLimitResponse;
 
     const req_body: SearchQyery = await req.json();
-    const search_bar_query = sanitizeInput(req_body.search_bar_query);
+    let search_bar_query = sanitizeInput(req_body.search_bar_query);
 
-    if (search_bar_query.length > 100) {
-        return NextResponse.json({ data: [] }, { status: 200 });
+
+    // استخراج الفلاتر الإضافية بناءً على البحث قبل التحقق من الفلاتر
+    const autoFilters = extractEducationalFilters(search_bar_query);
+
+    // إذا كان البحث يحتوي فقط على كلمات تخص الفلاتر، اجعل البحث النصي فارغ
+    const isOnlyFilter = isOnlyFilterWords(search_bar_query);
+    if (isOnlyFilter) {
+        search_bar_query = "";
     }
-    if(search_bar_query.length < 3  && req_body.filters.length === 0) {
-        return NextResponse.json({ data:[]}, { status: 200 });
-    }
-    
-    const filters = req_body.filters.map((filter) => sanitizeInput(filter));
-    if(filters.length > 10) {
+
+    let filters = req_body.filters.map((filter) => sanitizeInput(filter));
+    // دمج الفلاتر وإزالة التكرار
+    filters = [...new Set([...filters, ...autoFilters])];
+    if (filters.length > 10) {
         return NextResponse.json({ data: "Too many filters" }, { status: 200 });
     }
-
-
-    if(search_bar_query.trim() === ""){
-        if(filters.length === 0)
-            return NextResponse.json({"data":[]}, { status: 200 });
-        
+console.log("filters", filters);
+console.log("search_bar_query", search_bar_query);
+    // إذا كان البحث النصي فارغًا
+    if (search_bar_query.trim() === "") {
+        if (filters.length === 0) return NextResponse.json({ "data": [] }, { status: 200 });
         const query = supabase
-        .from("files_info")
-        .select("*")
-        .limit(250);
+            .from("files_info")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(500);
 
-        if (filters.length > 0) {
-            query.contains("categories", filters);
-        }
-        
-        const { data, error } = await query
-    
-        if (error) {
-            console.log(error)
-            return NextResponse.json({ error: error.message }, { status: 500 });
-        }
-        return NextResponse.json({ data }, { status: 200 });
-
-
-    }
-    
-
-    const similarWords = generateSimilarWords(search_bar_query);
-    const f = Array.from(similarWords)
-    .flatMap(word => [
-        `file_name.ilike.%${word}%`,
-        `file_description.ilike.%${word}%`
-    ])
-    .join(',');
-
-
-    
-    const query = supabase
-        .from("files_info")
-        .select("*")
-        .or(f);
-
-
-    if (filters.length > 0) {
+        if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
+        query.or('categories.cs.{"بكلوريا علمي"},categories.cs.{"بكلوريا ادبي"}');
+    } else if (filters.length > 0) {
         query.contains("categories", filters);
     }
 
-    const { data, error } = await query
+        const { data, error } = await query;
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+        return NextResponse.json({ data }, { status: 200 });
+    }
+
+    // توليد كلمات مشابهة للبحث النصي فقط إذا كانت الجملة غير فارغة
+    let f = "";
+    if (search_bar_query.trim() !== "") {
+        const similarWords = generateSimilarWords(search_bar_query);
+        f = Array.from(similarWords)
+            .flatMap(word => [
+                `file_name.ilike.%${word}%`,
+                `file_description.ilike.%${word}%`
+            ])
+            .join(',');
+    }
+
+    // الاستعلام مع البحث في النص والفلاتر
+    const query = supabase
+        .from("files_info")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (f) {
+        query.or(f);  // إذا كانت f تحتوي على شروط، نضيفها للاستعلام
+    }
+    // إذا كان يوجد "بكلوريا علمي" و"بكلوريا ادبي" معًا في الفلاتر، أحضر الملفات التي تحتوي على كليهما
+    if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
+        query.or('categories.cs.{"بكلوريا علمي"},categories.cs.{"بكلوريا ادبي"}');
+    } else if (filters.length > 0) {
+        query.contains("categories", filters);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
         console.error("Error fetching data:", error.message);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
     return NextResponse.json({ data }, { status: 200 });
 }

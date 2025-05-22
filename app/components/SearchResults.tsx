@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import {  FaDownload } from 'react-icons/fa';
+import { FaDownload } from 'react-icons/fa';
 
 export interface FileData {
   fileName: string;
@@ -56,13 +56,22 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
                     </p>
                   )}
                   {result.created_at && (
-                    <p className="text-green-700 text-xs mt-1">
-                      {new Date(result.created_at).toLocaleDateString('ar-EG', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </p>
+                    <div className="">
+                      <span className="text-green-400 text-xs">
+                        تاريخ الاصدار:{" "}
+                        {(() => {
+                          const date = new Date(result.created_at!);
+                          const monthsAr = [
+                            "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+                            "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+                          ];
+                          const day = date.getDate();
+                          const month = monthsAr[date.getMonth()];
+                          const year = date.getFullYear();
+                          return `${day} ${month} ${year}`;
+                        })()}
+                      </span>
+                    </div>
                   )}
                   {result.filters && result.filters.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2 justify-end">
