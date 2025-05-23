@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Search from "./Search"
 import SearchResults, { FileData } from "./SearchResults"
 import { fetchSearchResults } from "@/client/helpers/search_files";
+import ToastNotification from "./ToastNotification";
 type filters = {
     category: string;
     subject: string;
@@ -18,6 +19,7 @@ const SearchContainer = () => {
     const [loading,setLoading] = useState(false);
     const [query,setQuery] = useState("");
     const [error_message, setError_message] = useState("يرجى إدخال  البحث لعرض النتائج.");
+    const [errorToast,seterrorToast] = useState(false);
 
 
     useEffect(()=>{
@@ -60,7 +62,7 @@ const SearchContainer = () => {
         });
         if(!result.success){
             setError_message("لا توجد نتائج مطابقة للبحث");
-            alert("error")
+            seterrorToast(true);
             setLoading(false);
             return;
         }
@@ -108,6 +110,10 @@ const SearchContainer = () => {
 
   return (
     <>
+    {
+      errorToast&&
+      <ToastNotification onClose={()=>seterrorToast(false)} message="تحقق من الاتصال بالشبكة وعاود المحاولة" isError={true}/>
+    }
     <div className="px-4"> {/* إضافة padding جانبي للبحث على الهواتف */}
         <Search
             onSearch={onSearch} 
