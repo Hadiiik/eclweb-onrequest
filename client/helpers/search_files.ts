@@ -10,6 +10,9 @@ type SearchQuery = {
   };
   
   export async function fetchSearchResults(query: SearchQuery): Promise<SearchResponse> {
+    // إضافة وقت انتظار عشوائي بين 0 و 2 ثانية
+    const delay = Math.random() * 2000;
+    await new Promise(resolve => setTimeout(resolve, delay));
     try {
       const response = await fetch('/api/files/search', {
         method: 'POST',
@@ -27,7 +30,6 @@ type SearchQuery = {
           data: result.error || "Unknown error occurred",
         };
       }
-      console.log(result.data)
       return {
         success: true,
         data: result.data,

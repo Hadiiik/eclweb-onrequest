@@ -9,6 +9,7 @@ export interface FileData {
   description?: string;
   filters?: string[];
   created_at?: string;
+  file_id?: string;
 }
 
 interface SearchResultsProps {
@@ -21,6 +22,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
 
     const [isOpen, setIsOpen] = useState(false);
     const [deltedfilename, setDeletedFileName] = useState("");
+    const [deletedFileId, setDeletedFileId] = useState("");
   if (!results || results.length === 0) {
     return (
       <div className="text-center py-4 text-gray-500 text-sm">
@@ -56,6 +58,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
                 e.stopPropagation();
                 setIsOpen(true);
                 setDeletedFileName(result.fileName);
+                setDeletedFileId(result.file_id!);
+
               }}
               className="flex items-center p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
             >

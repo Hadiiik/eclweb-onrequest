@@ -12,8 +12,7 @@ type filters = {
 const SearchContainer = () => {
 
 
-    
-    
+        
     const [Filters,setFilters] = useState<string[]>([]);
     const [results,setResult] = useState<FileData[]>([]);
     const [loading,setLoading] = useState(false);
@@ -28,6 +27,24 @@ const SearchContainer = () => {
         onSearch(query)
         
     },[Filters])
+    useEffect(()=>{
+        const storedResults = sessionStorage.getItem("searchResults");
+        if (storedResults) {
+            const parsedResults = JSON.parse(storedResults);
+            setResult(parsedResults);
+        } 
+    }
+    ,[])
+
+    useEffect(() => {
+      const handleBeforeUnload = () => {
+        sessionStorage.removeItem("searchResults");
+      };
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }, []);
 
     const onSearch = async (q:string)=>{
         setLoading(true);
@@ -62,8 +79,8 @@ const SearchContainer = () => {
             created_at:item.created_at||""
         }));
         setResult(formattedData);
+        sessionStorage.setItem("searchResults", JSON.stringify(formattedData));
         setLoading(false);
-        console.log(data)
 
     }
 

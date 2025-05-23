@@ -99,9 +99,11 @@ export async function POST(req: NextRequest) {
 
     const req_body: SearchQyery = await req.json();
     let search_bar_query = sanitizeInput(req_body.search_bar_query);
-    if (search_bar_query.trim().length < 3) return NextResponse.json({ "data": [] }, { status: 200 });
 
-
+    search_bar_query = search_bar_query
+        .split(/\s+/)
+        .filter(word => word.length > 2)
+        .join(' ');
     // استخراج الفلاتر الإضافية بناءً على البحث قبل التحقق من الفلاتر
     const autoFilters = extractEducationalFilters(search_bar_query);
 
@@ -117,8 +119,6 @@ export async function POST(req: NextRequest) {
     if (filters.length > 10) {
         return NextResponse.json({ data: "Too many filters" }, { status: 200 });
     }
-console.log("filters", filters);
-console.log("search_bar_query", search_bar_query);
     // إذا كان البحث النصي فارغًا
     if (search_bar_query.trim() === "") {
         if (filters.length === 0) return NextResponse.json({ "data": [] }, { status: 200 });
