@@ -10,17 +10,17 @@ type SearchResponse = {
 };
 
 // القيم الصالحة
-// const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'لغة', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ'];
-// const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'لغة', 'كيمياء'];
-// const bacLiterarySubjects = ['ديانة اسلامية', 'لغة', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة'];
+const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'انكليزي', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ'];
+const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'انكليزي', 'كيمياء'];
+const bacLiterarySubjects = ['ديانة اسلامية', 'انكليزي', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة'];
 const types = ['دورات', 'اوراق عمل', 'اختبارات', 'ملخصات', 'مناهج'];
 const years = Array.from({ length: 11 }, (_, i) => `${2015 + i}`);
 
 // جميع الفلاتر الممكنة في مصفوفة واحدة بدون تكرار
 const allFilters = Array.from(new Set([
-  // ...ninthSubjects,
-  // ...bacScientificSubjects,
-  // ...bacLiterarySubjects,
+  ...ninthSubjects,
+  ...bacScientificSubjects,
+  ...bacLiterarySubjects,
   ...types,
   ...years,
 ]));

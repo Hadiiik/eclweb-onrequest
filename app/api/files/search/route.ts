@@ -21,10 +21,10 @@ function extractEducationalFilters(query: string): string[] {
         .replace(/[ة ه]/g, "ا")
         .toLowerCase();
 
-    const hasBacWord = /(بكالوريا|بكلوريا)/.test(normalizedQuery);
-    const hasScientific = /علمي/.test(normalizedQuery);
-    const hasLiterary = /(ادبي|أدبي)/.test(normalizedQuery);
-    const hasTase3 = /تاسع/.test(normalizedQuery);
+    const hasBacWord = /(ال)?(بكالوريا|باكالوريا|بكلوريا)/.test(normalizedQuery);
+    const hasScientific = /(ال)?علمي/.test(normalizedQuery);
+    const hasLiterary = /(ال)?(ادبي|أدبي)/.test(normalizedQuery);
+    const hasTase3 = /(ال)?تاسع/.test(normalizedQuery);
 
     const extraFilters: string[] = [];
 
@@ -49,7 +49,6 @@ function extractEducationalFilters(query: string): string[] {
     if (hasTase3) {
         extraFilters.push("تاسع");
     }
-
     return extraFilters;
 }
 
@@ -64,12 +63,17 @@ function isOnlyFilterWords(query: string): boolean {
     const words = normalized.split(/\s+/).filter(Boolean);
 
     const allowedWords = new Set([
+        "علمي",
+        "ادبي", 
         "بكلوريا",
         "بكالوريا",
+        "باكالوريا",
         "بكلوريا علمي",
         "بكالوريا علمي",
+        "باكالوريا علمي",
         "بكلورياادبي",
         "بكالوريا ادبي",
+        "باكالوريا ادبي",   
         "ادبي",
         "تاسع"
     ]);

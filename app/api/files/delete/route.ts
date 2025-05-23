@@ -5,7 +5,6 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
     const rateLimitResponse = await rateLimiterMiddleware(req);
     if (rateLimitResponse) return rateLimitResponse;
-    console.log("delete file");
     const cookies = req.cookies;
     const adminToken = cookies.get("admin_token")?.value;
     if (!adminToken) {

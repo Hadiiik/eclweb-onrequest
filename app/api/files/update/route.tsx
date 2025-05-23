@@ -7,6 +7,7 @@ type FileInfo = {
     file_description: string;
     categories: string[];
     file_url: string;
+    file_id: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -27,16 +28,16 @@ export async function POST(req: NextRequest) {
     const file_description = sanitizeInput(req_body.file_description);
     const categories = req_body.categories.map((category) => sanitizeInput(category));
     const file_url = sanitizeInput(req_body.file_url);
-    const {data,error} = await supabase
-    .from("files_info")
-    .insert([
-        {
+    const { data, error } = await supabase
+        .from("files_info")
+        .update({
             file_name,
             file_description,
-            categories: categories,
+            categories,
             file_url,
-        },
-    ])
+            created_at: new Date(),
+        })
+        .eq("id", req_body.file_id);
     if (error) {
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,

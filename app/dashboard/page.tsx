@@ -1,14 +1,21 @@
-"use client";
+
 
 import Link from "next/link";
 import { FiUpload, FiSearch } from "react-icons/fi";
 import { FaFileAlt } from "react-icons/fa";
 import Header from "../components/Header";
+import { supabase } from "@/lib/supabase";
 
 
+export const revalidate = 600; // كل 10 دقائق (يمكنك تغيير الرقم حسب حاجتك)
 
 
-const Dashboard = () => {
+const Dashboard = async () => {
+
+  const {count } = await supabase
+    .from("files_info")
+    .select("*", { count: "exact", head: true });
+  const filesCount = count ?? 0;
   return (
     <>
     <Header/>
@@ -18,7 +25,7 @@ const Dashboard = () => {
       {/* Badge عدد الملفات */}
       <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium shadow-sm">
         <FaFileAlt className="mr-2" />
-        عدد الملفات: {140}
+        عدد الملفات: {filesCount}
       </div>
     <p className="text-sm text-gray-500 mt-2">
          قد يتأخر عدد الملفات الفعلي في الظهور عدة دقائق من التحديث.
@@ -47,3 +54,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

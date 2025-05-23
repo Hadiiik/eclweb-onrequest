@@ -28,7 +28,6 @@ type filters = {
 
 const SearchContainer = () => {
 
-
     
     
     const [Filters,setFilters] = useState<string[]>([]);

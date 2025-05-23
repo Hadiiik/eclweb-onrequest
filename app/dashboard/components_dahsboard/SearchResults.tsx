@@ -1,7 +1,6 @@
 "use client";
 import ToastNotification from '@/app/components/ToastNotification';
 import { deleteFile } from '@/client/helpers/deletefile';
-import Link from 'next/link';
 import { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 
@@ -97,7 +96,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
               <FaTrashAlt className="text-red-500" size={16} />
             </button>
             {/* المحتوى منحاز لليمين */}
-            <Link href={`/preview?preview=${result.fileUrl}`} className="flex-1 ml-4 min-w-0 no-underline">
+            <button 
+                onClick={() => {
+                localStorage.setItem("selectedFile", JSON.stringify(result));
+                window.location.href = "/dashboard/SearchEdit/edit";
+              }}
+             className="flex-1 ml-4 min-w-0 no-underline">
               <div className="flex items-center cursor-pointer">
                 <div className="text-right flex-1 min-w-0">
                   <h3 className="text-sm font-medium text-gray-800 line-clamp-1">
@@ -143,7 +147,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
                   {/* <FaFilePdf size={18} /> */}
                 </div>
               </div>
-            </Link>
+            </button>
           </div>
         </div>
       ))}

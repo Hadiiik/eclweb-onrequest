@@ -1,8 +1,10 @@
 "use client";
-import React, { useState } from 'react';
-import FilterPanel from './FilterPanel'; // تأكد من تعديل المسار حسب مكان المكون
-import { uploadFileInfo } from '@/client/helpers/upload_file';
-import ToastNotification from './ToastNotification';
+
+import FilterPanel from "@/app/components/FilterPanel";
+import Header from "@/app/components/Header";
+import ToastNotification from "@/app/components/ToastNotification";
+import { updateFileInfo } from "@/client/helpers/update_file";
+import { useEffect, useState } from "react";
 
 const FileUploadForm = () => {
   const [fileName, setFileName] = useState('');
@@ -10,8 +12,29 @@ const FileUploadForm = () => {
   const [fileDescription, setFileDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [fileid, setFileId] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [showerrortoast,setShowerrortoast] = useState(false);
+
+    useEffect(() => {
+    const savedFile = localStorage.getItem("selectedFile");
+    if (savedFile) {
+      try {
+        const parsed = JSON.parse(savedFile);
+        if (parsed.fileName) setFileName(parsed.fileName);
+        if (parsed.fileUrl) setFileUrl(parsed.fileUrl);
+        if (parsed.description) setFileDescription(parsed.description);
+        if(parsed.file_id) setFileId(parsed.file_id);
+        if (parsed.filters && Array.isArray(parsed.filters)) {
+          setSelectedCategories(parsed.filters);
+        }
+      } catch (e) {
+        console.error("تعذر تحليل بيانات الملف من localStorage", e);
+      }
+    }
+  }, []);
+
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,11 +42,12 @@ const FileUploadForm = () => {
     setFileUrl('');
     setFileDescription('');
     setSelectedCategories([]);
-    const result = await uploadFileInfo({
+    const result = await updateFileInfo({
       "file_name": fileName,
       "file_description": fileDescription,
       "categories": selectedCategories,
       "file_url": fileUrl,
+      "file_id": fileid
     });
     if (result.success) {
       setShowToast(true)
@@ -57,12 +81,13 @@ const FileUploadForm = () => {
 
   return (
     <>
+    <Header/>
     <div className="max-w-md  p-4 bg-white rounded-lg shadow-md mx-auto mt-10 ">
     {
-      showToast&&<ToastNotification message='تم رفع الملف بنجاح' onClose={()=>setShowToast(false)} />
+      showToast&&<ToastNotification message='تم تعديل الملف بنجاح' onClose={()=>setShowToast(false)} />
     }
     {
-      showerrortoast&&<ToastNotification message='فشل رفع الملف' onClose={()=>setShowerrortoast(false)} isError={true} />
+      showerrortoast&&<ToastNotification message='فشل تعديل الملف' onClose={()=>setShowerrortoast(false)} isError={true} />
     }
     <div className=''>
       <h2 className="text-2xl font-bold text-green-600 mb-4">إدخال بيانات الملف</h2>

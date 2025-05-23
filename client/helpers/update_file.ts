@@ -3,6 +3,7 @@ type FileInfo = {
   file_description: string;
   categories: string[];
   file_url: string;
+    file_id?: string;
 };
 
 type UploadResponse = {
@@ -53,7 +54,7 @@ function extractCategoriesFromFileName(fileName: string): string[] {
   return Array.from(categories);
 }
 
-export async function uploadFileInfo(fileInfo: FileInfo): Promise<UploadResponse> {
+export async function updateFileInfo(fileInfo: FileInfo): Promise<UploadResponse> {
   // نضيف التصنيفات المستخرجة من اسم الملف لمصفوفة التصنيفات مع إزالة التكرار
   const extractedCategories = extractCategoriesFromFileName(fileInfo.file_name);
   fileInfo.categories = Array.from(new Set([...fileInfo.categories, ...extractedCategories]));
@@ -63,7 +64,7 @@ export async function uploadFileInfo(fileInfo: FileInfo): Promise<UploadResponse
   await new Promise(resolve => setTimeout(resolve, delay));
 
   try {
-    const response = await fetch('/api/files/upload', {
+    const response = await fetch('/api/files/update', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
