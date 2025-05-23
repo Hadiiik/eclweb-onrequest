@@ -1,4 +1,6 @@
 "use client";
+import ToastNotification from '@/app/components/ToastNotification';
+import { deleteFile } from '@/client/helpers/deletefile';
 import Link from 'next/link';
 import { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
@@ -23,6 +25,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
     const [isOpen, setIsOpen] = useState(false);
     const [deltedfilename, setDeletedFileName] = useState("");
     const [deletedFileId, setDeletedFileId] = useState("");
+    const [deletedFileIds, setDeletedFileIds] = useState<string[]>([]);
+    const [showSuccsesToast , setShowSuccsesToast] = useState(false);
+    const [showErrorToast , setShowErrorToast] = useState(false);
+
   if (!results || results.length === 0) {
     return (
       <div className="text-center py-4 text-gray-500 text-sm">
@@ -33,20 +39,46 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
 
   return (
     <div className="space-y-4 mt-4">
+
+    {
+        showSuccsesToast && <ToastNotification message="تم حذف الملف بنجاح" onClose={()=>setShowSuccsesToast(false)}/>
+    }
+    {
+        showErrorToast && <ToastNotification message="حدث خطأ أثناء حذف الملف" onClose={()=>setShowErrorToast(false)} isError={true}/>
+    }
+
         {isOpen && (
             <ConfirmDeleteModal
             isOpen={isOpen}
             fileName={deltedfilename}
             onCancel={() => setIsOpen(false)}
-            onConfirm={() => {
+            onConfirm={async () => {
+              setIsOpen(false);
+              setDeletedFileIds((prev) => [...prev, deletedFileId]);
+              try {
                 // Handle delete confirmation
-
-                setIsOpen(false);
+              const result = await deleteFile(deletedFileId);
+                if (result.success) {
+                    // Handle successful deletion (e.g., show a success message, refresh the list, etc.)
+                    setShowSuccsesToast(true);
+                } else {
+                    // Handle deletion error (e.g., show an error message)
+                    setDeletedFileIds((prev) => prev.filter(id => id !== deletedFileId));
+                    setShowErrorToast(true);
+                }
+              } catch (error) {
+                setDeletedFileIds((prev) => prev.filter(id => id !== deletedFileId));
+                setShowErrorToast(true);
+                console.error("Error deleting file:", error);
+              }
+                
             }}
             fileid={""}
             />
         )}
-      {results.map((result, index) => (
+      {results
+      .filter((result) => !deletedFileIds.includes(result.file_id!))
+      .map((result, index) => (
         <div
           key={index}
           className="flex flex-col p-4  border border-green-200 rounded-lg bg-white hover:bg-green-50 transition-colors duration-200 shadow-md"
@@ -59,7 +91,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
                 setIsOpen(true);
                 setDeletedFileName(result.fileName);
                 setDeletedFileId(result.file_id!);
-
               }}
               className="flex items-center p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
             >
@@ -143,8 +174,8 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-xs mx-3.5">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+    <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-xs ">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm mx-4">
         <h2 className="text-lg font-bold text-gray-800 mb-4">تأكيد الحذف</h2>
         <p className="text-sm text-gray-600 mb-6">
           هل أنت متأكد أنك تريد حذف الملف <span className="font-semibold">{fileName}</span>؟

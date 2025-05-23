@@ -1,10 +1,10 @@
 "use client";
 import Header from "@/app/components/Header";
-import { useCallback } from "react";
 import Search from "@/app/components/Search";
 import { fetchSearchResults } from "@/client/helpers/search_files";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import SearchResults, { FileData } from "../components_dahsboard/SearchResults";
+
 
 
 export default function Page() {
@@ -38,30 +38,15 @@ const SearchContainer = () => {
     const [error_message, setError_message] = useState("يرجى إدخال  البحث لعرض النتائج.");
 
 
+
     useEffect(()=>{
         if (Filters.length === 0 && results.length === 0)
             return;
         onSearch(query)
         
     },[Filters])
-    useEffect(()=>{
-        const storedResults = sessionStorage.getItem("searchResults");
-        if (storedResults) {
-            const parsedResults = JSON.parse(storedResults);
-            setResult(parsedResults);
-        } 
-    }
-    ,[])
 
-        useEffect(() => {
-      const handleBeforeUnload = () => {
-        sessionStorage.removeItem("searchResults");
-      };
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }, []);
+
     const onSearch = async (q:string)=>{
         setLoading(true);
         const result = await fetchSearchResults({
@@ -71,7 +56,6 @@ const SearchContainer = () => {
         });
         if(!result.success){
             setError_message("لا توجد نتائج مطابقة للبحث");
-            alert("error")
             setLoading(false);
             return;
         }
@@ -97,7 +81,6 @@ const SearchContainer = () => {
             file_id:item.id||""
         }));
         setResult(formattedData);
-        sessionStorage.setItem("searchResults", JSON.stringify(formattedData));
         setLoading(false);
 
     }
@@ -120,6 +103,7 @@ const SearchContainer = () => {
 
   return (
     <>
+    
     <div className="px-4"> {/* إضافة padding جانبي للبحث على الهواتف */}
         <Search
             onSearch={onSearch} 

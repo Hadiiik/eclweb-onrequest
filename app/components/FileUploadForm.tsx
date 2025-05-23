@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import FilterPanel from './FilterPanel'; // تأكد من تعديل المسار حسب مكان المكون
 import { uploadFileInfo } from '@/client/helpers/upload_file';
+import ToastNotification from './ToastNotification';
 
 const FileUploadForm = () => {
   const [fileName, setFileName] = useState('');
@@ -9,6 +10,8 @@ const FileUploadForm = () => {
   const [fileDescription, setFileDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [showerrortoast,setShowerrortoast] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -20,14 +23,14 @@ const FileUploadForm = () => {
       "file_url": fileUrl,
     });
     if (result.success) {
-      alert('تم حفظ الملف بنجاح!');
+      setShowToast(true)
       // إعادة تعيين الحقول بعد النجاح
       setFileName('');
       setFileUrl('');
       setFileDescription('');
       setSelectedCategories([]);
     } else {
-      alert(`فشل حفظ الملف: ${result.error}`);
+     setShowerrortoast(true)
     }
 
 
@@ -54,7 +57,15 @@ const FileUploadForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
+    <>
+    <div className="max-w-md  p-4 bg-white rounded-lg shadow-md mx-auto mt-10 ">
+    {
+      showToast&&<ToastNotification message='تم رفع الملف بنجاح' onClose={()=>setShowToast(false)} />
+    }
+    {
+      showerrortoast&&<ToastNotification message='فشل رفع الملف' onClose={()=>setShowerrortoast(false)} isError={true} />
+    }
+    <div className=''>
       <h2 className="text-2xl font-bold text-green-600 mb-4">إدخال بيانات الملف</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -113,6 +124,8 @@ const FileUploadForm = () => {
         />
       )}
     </div>
+    </div>
+    </>
   );
 };
 

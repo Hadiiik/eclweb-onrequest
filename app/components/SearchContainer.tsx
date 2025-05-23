@@ -29,6 +29,10 @@ const SearchContainer = () => {
     },[Filters])
     useEffect(()=>{
         const storedResults = sessionStorage.getItem("searchResults");
+        const storedQuery = sessionStorage.getItem("searchQuery");
+        if (storedQuery) { 
+            setQuery(storedQuery);
+        }
         if (storedResults) {
             const parsedResults = JSON.parse(storedResults);
             setResult(parsedResults);
@@ -39,6 +43,7 @@ const SearchContainer = () => {
     useEffect(() => {
       const handleBeforeUnload = () => {
         sessionStorage.removeItem("searchResults");
+        sessionStorage.removeItem("searchQuery");
       };
       window.addEventListener("beforeunload", handleBeforeUnload);
       return () => {
@@ -80,6 +85,7 @@ const SearchContainer = () => {
         }));
         setResult(formattedData);
         sessionStorage.setItem("searchResults", JSON.stringify(formattedData));
+        sessionStorage.setItem("searchQuery", q);
         setLoading(false);
 
     }
