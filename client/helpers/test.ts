@@ -39,9 +39,12 @@ function generateFakeFile(index: number) {
 }
 
 export async function uploadFakeFiles() {
-  for (let i = 0; i < 30; i++) {
-    const fakeFile = generateFakeFile(i);
-    const response = await uploadFileInfo(fakeFile);
-    console.log(`File ${i + 1}:`, response.success ? 'Uploaded successfully' : `Failed - ${response.error}`);
+  for (let i = 0; i < 500; i++) {
+    const response = await uploadFileInfo({
+      file_name: `ملف عربي رقم ${i + 1}`,
+      file_description: `وصف الملف التجريبي رقم ${i + 1}`,
+      categories: ["عربي"],
+      file_url: generateFakeFile(i).file_url,
+    });
   }
 }

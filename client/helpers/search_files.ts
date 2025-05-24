@@ -66,7 +66,6 @@ export async function fetchSearchResults(query: SearchQuery): Promise<SearchResp
     filters: [...new Set([...query.filters, ...foundFilters])],
     page: query.page,
   };
-  console.log("Processed query:", processedQuery);
 
   // تأخير عشوائي
   const delay = Math.random() * 3000;
@@ -82,7 +81,6 @@ export async function fetchSearchResults(query: SearchQuery): Promise<SearchResp
     });
 
     const result = await response.json();
-    console.log("Search result:", result.data);
 
     if (!response.ok) {
       return {

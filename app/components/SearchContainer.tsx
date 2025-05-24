@@ -11,6 +11,34 @@ type filters = {
     type: string;
   }
 const SearchContainer = () => {
+useEffect(() => {
+    console.log(
+  "%cONREQUEST",
+  "color: #fff; " +
+  "background: linear-gradient(90deg, #000, #444); " +
+  "font-size: 2rem; " +
+  "font-weight: 900; " +
+  "padding: 12px 28px; " +
+  "border-radius: 14px; " +
+  "box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7); " +
+  "letter-spacing: 3px; " +
+  "font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"
+);
+
+console.log(
+  "%cInstagram: %c onrequest.dev",
+  "color: #fff; font-weight: bold; font-size: 16px;",
+  "color: #fff; font-size: 16px; text-decoration: underline; cursor: pointer;"
+);
+
+console.log(
+  "%cEmail: %c commerce.onrequest@gmail.com",
+  "color: #fff; font-weight: bold; font-size: 16px;",
+  "color: #fff; font-size: 16px; text-decoration: underline; cursor: pointer;"
+);
+
+},[])
+
 
 
         
