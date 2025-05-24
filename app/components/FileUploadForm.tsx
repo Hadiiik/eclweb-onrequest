@@ -12,9 +12,11 @@ const FileUploadForm = () => {
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showerrortoast,setShowerrortoast] = useState(false);
+  const [isloading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     setFileName('');
     setFileUrl('');
     setFileDescription('');
@@ -26,9 +28,11 @@ const FileUploadForm = () => {
       "file_url": fileUrl,
     });
     if (result.success) {
+      setIsLoading(false);
       setShowToast(true)
       // إعادة تعيين الحقول بعد النجاح
     } else {
+      setIsLoading(false);
      setShowerrortoast(true)
     }
 
@@ -126,8 +130,9 @@ const FileUploadForm = () => {
         <button
           type="submit"
           className="w-full bg-green-600 text-white font-bold py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+          disabled={isloading}
         >
-          حفظ الملف
+          {isloading ? 'جار حفظ الملف...' : 'حفظ الملف'}
         </button>
       </form>
 
