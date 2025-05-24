@@ -107,7 +107,7 @@ const SearchContainer = () => {
         setResult(formattedData);
         console.log("here")
         sessionStorage.setItem("searchResults", JSON.stringify(formattedData));
-        sessionStorage.setItem("searchQuery", q);
+        // sessionStorage.setItem("searchQuery", q);
         setLoading(false);
 
     }

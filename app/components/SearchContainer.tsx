@@ -61,14 +61,14 @@ const SearchContainer = () => {
             page : "0"
         });
         if(!result.success){
-            setError_message("لا توجد نتائج مطابقة للبحث");
+            setError_message("لا توجد نتائج مطابقة للبحث جرب استخدام كلمات مختلفة أو استخدم فلاتر البحث المتاحة");
             seterrorToast(true);
             setLoading(false);
             return;
         }
         const data = result.data;
         if (data.length === 0) 
-            setError_message("لا توجد نتائج مطابقة للبحث");
+            setError_message("لا توجد نتائج مطابقة للبحث جرب استخدام كلمات مختلفة أو استخدم فلاتر البحث المتاحة");
 
         type SearchResultItem = {
             file_name: string;
@@ -87,7 +87,7 @@ const SearchContainer = () => {
         }));
         setResult(formattedData);
         sessionStorage.setItem("searchResults", JSON.stringify(formattedData));
-        sessionStorage.setItem("searchQuery", q);
+        // sessionStorage.setItem("searchQuery", q);
         setLoading(false);
 
     }

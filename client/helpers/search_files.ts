@@ -69,7 +69,7 @@ export async function fetchSearchResults(query: SearchQuery): Promise<SearchResp
   console.log("Processed query:", processedQuery);
 
   // تأخير عشوائي
-  const delay = Math.random() * 2000;
+  const delay = Math.random() * 3000;
   await new Promise(resolve => setTimeout(resolve, delay));
 
   try {
