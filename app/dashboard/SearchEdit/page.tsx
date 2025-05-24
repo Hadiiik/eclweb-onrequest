@@ -46,6 +46,31 @@ const SearchContainer = () => {
     },[Filters])
 
 
+    useEffect(()=>{
+        const storedResults = sessionStorage.getItem("searchResults");
+        const storedQuery = sessionStorage.getItem("searchQuery");
+        if (storedQuery) { 
+            setQuery(storedQuery);
+        }
+        if (storedResults) {
+            const parsedResults = JSON.parse(storedResults);
+            setResult(parsedResults);
+        } 
+    }
+    ,[])
+
+
+    useEffect(() => {
+      const handleBeforeUnload = () => {
+        sessionStorage.removeItem("searchResults");
+        sessionStorage.removeItem("searchQuery");
+      };
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }, []);
+
     const onSearch = async (q:string)=>{
         setLoading(true);
         const result = await fetchSearchResults({
@@ -80,6 +105,9 @@ const SearchContainer = () => {
             file_id:item.id||""
         }));
         setResult(formattedData);
+        console.log("here")
+        sessionStorage.setItem("searchResults", JSON.stringify(formattedData));
+        sessionStorage.setItem("searchQuery", q);
         setLoading(false);
 
     }
