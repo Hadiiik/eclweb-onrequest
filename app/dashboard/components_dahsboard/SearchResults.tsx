@@ -1,8 +1,9 @@
 "use client";
 import ToastNotification from '@/app/components/ToastNotification';
 import { deleteFile } from '@/client/helpers/deletefile';
+import Link from 'next/link';
 import { useState } from 'react';
-import { FaTrashAlt } from 'react-icons/fa';
+import { FaEye, FaTrashAlt } from 'react-icons/fa';
 
 export interface FileData {
   fileName: string;
@@ -17,6 +18,10 @@ interface SearchResultsProps {
   results: FileData[];
   error_message?: string;
 }
+
+
+
+
 
 const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message }) => {
 
@@ -83,18 +88,35 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
           className="flex flex-col p-4  border border-green-200 rounded-lg bg-white hover:bg-green-50 transition-colors duration-200 shadow-md"
         >
           <div className="flex items-center justify-between">
-            {/* زر التحميل على اليسار */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(true);
-                setDeletedFileName(result.fileName);
-                setDeletedFileId(result.file_id!);
+
+            <div className="flex flex-col items-center space-y-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(true);
+                  setDeletedFileName(result.fileName);
+                  setDeletedFileId(result.file_id!);
+                }}
+                className="flex items-center p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
+              >
+                <FaTrashAlt className="text-red-500" size={16} />
+              </button>
+              <Link
+                href={{
+                pathname: '/preview',
+                query: {
+                  pre: encodeURIComponent(result.fileUrl),
+                  nm: encodeURIComponent(result.fileName),
+                  desc: encodeURIComponent(result.description || ''),
+                  ca: encodeURIComponent(result.created_at || ''),
+                },
               }}
-              className="flex items-center p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
-            >
-              <FaTrashAlt className="text-red-500" size={16} />
-            </button>
+                className="p-2 rounded-md hover:bg-gray-100 text-green-600 transition-colors duration-200"
+              >
+                <FaEye />
+              </Link>
+            </div>
+
             {/* المحتوى منحاز لليمين */}
             <button 
                 onClick={() => {
@@ -104,17 +126,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
              className="flex-1 ml-4 min-w-0 no-underline">
               <div className="flex items-center cursor-pointer">
                 <div className="text-right flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-gray-800 line-clamp-1">
+                  <h3 className="text-sm font-medium text-gray-800 break-words">
                     {result.fileName}
                   </h3>
                   {result.description && (
-                    <p className="text-gray-500 text-xs mt-1">
+                    <p className="text-gray-500 text-xs mt-1 break-words" dir='rtl'>
                       {result.description}
                     </p>
                   )}
                   {result.created_at && (
                     <div className="">
-                      <span className="text-green-400 text-xs">
+                      <span className="text-green-500 text-xs">
                         تاريخ الاصدار:{" "}
                         {(() => {
                           const date = new Date(result.created_at!);

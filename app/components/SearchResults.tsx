@@ -24,7 +24,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
   }
 
   return (
-    <div className="space-y-4 mt-4">
+    <div className="space-y-4 mt-4" >
       {results.map((result, index) => (
         <div
           key={index}
@@ -44,20 +44,32 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
             </a>
 
             {/* المحتوى منحاز لليمين */}
-            <Link href={`/preview?preview=${result.fileUrl}`} className="flex-1 ml-4 min-w-0 no-underline">
+              <Link
+              href={{
+                pathname: '/preview',
+                query: {
+                  pre: encodeURIComponent(result.fileUrl),
+                  nm: encodeURIComponent(result.fileName),
+                  desc: encodeURIComponent(result.description || ''),
+                  ca: encodeURIComponent(result.created_at || ''),
+                },
+              }}
+              className="flex-1 ml-4 min-w-0 no-underline"
+            >
+
               <div className="flex items-center cursor-pointer">
                 <div className="text-right flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-gray-800 line-clamp-1">
+                    <h3 className="text-sm font-medium text-gray-800 break-words">
                     {result.fileName}
-                  </h3>
+                    </h3>
                   {result.description && (
-                    <p className="text-gray-500 text-xs mt-1">
+                    <p className="text-gray-500 text-xs mt-1 break-words" dir='rtl'>
                       {result.description}
                     </p>
                   )}
                   {result.created_at && (
                     <div className="">
-                      <span className="text-green-400 text-xs">
+                      <span className="text-green-500 text-xs">
                         تاريخ الاصدار:{" "}
                         {(() => {
                           const date = new Date(result.created_at!);

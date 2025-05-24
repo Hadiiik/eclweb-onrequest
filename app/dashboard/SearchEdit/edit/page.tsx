@@ -15,6 +15,7 @@ const FileUploadForm = () => {
   const [fileid, setFileId] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [showerrortoast,setShowerrortoast] = useState(false);
+  const [isloading, setIsLoading] = useState(false); 
 
     useEffect(() => {
     const savedFile = localStorage.getItem("selectedFile");
@@ -38,10 +39,7 @@ const FileUploadForm = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setFileName('');
-    setFileUrl('');
-    setFileDescription('');
-    setSelectedCategories([]);
+    setIsLoading(true)
     const result = await updateFileInfo({
       "file_name": fileName,
       "file_description": fileDescription,
@@ -50,9 +48,11 @@ const FileUploadForm = () => {
       "file_id": fileid
     });
     if (result.success) {
+      setIsLoading(false)
       setShowToast(true)
       // إعادة تعيين الحقول بعد النجاح
     } else {
+      setIsLoading(false)
      setShowerrortoast(true)
     }
 
@@ -94,12 +94,25 @@ const FileUploadForm = () => {
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700">اسم الملف</label>
-          <input
-            type="text"
+          <textarea
+          maxLength={100}
             value={fileName}
             onChange={(e) => setFileName(e.target.value)}
             required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            rows={1}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-y"
+            style={{ minHeight: '40px', overflow: 'hidden', height: 'auto' }}
+            ref={el => {
+              if (el) {
+          el.style.height = 'auto';
+          el.style.height = `${el.scrollHeight}px`;
+              }
+            }}
+            onInput={e => {
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = 'auto';
+              target.style.height = `${target.scrollHeight}px`;
+            }}
           />
         </div>
         <div className="mb-4">
@@ -115,9 +128,23 @@ const FileUploadForm = () => {
         <div className="mb-4">
           <label className="block text-gray-700">وصف الملف (اختياري)</label>
           <textarea
+          maxLength={200}
             value={fileDescription}
             onChange={(e) => setFileDescription(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-y"
+            rows={1}
+            style={{ minHeight: '40px', maxHeight: '200px', overflow: 'hidden', height: 'auto' }}
+            ref={el => {
+              if (el) {
+          el.style.height = 'auto';
+          el.style.height = `${el.scrollHeight}px`;
+              }
+            }}
+            onInput={e => {
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = 'auto';
+              target.style.height = `${target.scrollHeight}px`;
+            }}
           />
         </div>
         <div className="mb-4">
@@ -136,8 +163,9 @@ const FileUploadForm = () => {
         <button
           type="submit"
           className="w-full bg-green-600 text-white font-bold py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+          disabled={isloading}
         >
-          حفظ الملف
+          {isloading ? "جار التحميل..." : "تعديل الملف"}
         </button>
       </form>
 

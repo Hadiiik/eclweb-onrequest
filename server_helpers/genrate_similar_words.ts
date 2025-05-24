@@ -34,7 +34,7 @@ export function generateSimilarWords(search_query: string): Set<string> {
         similarWords.add(englishConverted);
 
         // معالجة "ة" أو "ه" في نهاية الكلمة
-        const baseWord = word.endsWith("ة") || word.endsWith("ه") ? word.slice(0, -1) : word;
+        const baseWord = word.endsWith("ة") || word.endsWith("ه") || word.endsWith("ء")  ? word.slice(0, -1) : word;
 
         // إضافة الكلمة مع "ال" التعريف إذا لم تكن موجودة
         if (!baseWord.startsWith("ال") && baseWord.length > 1) {

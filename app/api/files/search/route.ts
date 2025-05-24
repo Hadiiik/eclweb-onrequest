@@ -150,6 +150,7 @@ export async function POST(req: NextRequest) {
     let f = "";
     if (search_bar_query.trim() !== "") {
         const similarWords = generateSimilarWords(search_bar_query);
+        console.log("Similar words generated:", similarWords);
         f = Array.from(similarWords)
             .flatMap(word => [
                 `file_name.ilike.%${word}%`,

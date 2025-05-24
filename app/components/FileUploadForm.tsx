@@ -69,12 +69,19 @@ const FileUploadForm = () => {
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700">اسم الملف</label>
-          <input
-            type="text"
+          <textarea
+            maxLength={100}
             value={fileName}
             onChange={(e) => setFileName(e.target.value)}
             required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            rows={1}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-y"
+            style={{ minHeight: '40px', overflow: 'hidden' }}
+            onInput={e => {
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = 'auto';
+              target.style.height = `${target.scrollHeight}px`;
+            }}
           />
         </div>
         <div className="mb-4">
@@ -90,9 +97,17 @@ const FileUploadForm = () => {
         <div className="mb-4">
           <label className="block text-gray-700">وصف الملف (اختياري)</label>
           <textarea
+          maxLength={200}
             value={fileDescription}
             onChange={(e) => setFileDescription(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-y"
+            rows={1}
+            style={{ minHeight: '40px', overflow: 'hidden' }}
+            onInput={e => {
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = 'auto';
+              target.style.height = `${target.scrollHeight}px`;
+            }}
           />
         </div>
         <div className="mb-4">
