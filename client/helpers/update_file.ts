@@ -59,6 +59,7 @@ export async function updateFileInfo(fileInfo: FileInfo): Promise<UploadResponse
   const extractedCategories = extractCategoriesFromFileName(fileInfo.file_name);
   fileInfo.categories = Array.from(new Set([...fileInfo.categories, ...extractedCategories]));
   const filters = [...fileInfo.categories];
+  fileInfo.file_description += '\n'
   for (const filter of filters) {
     if (!fileInfo.file_description.includes(filter)) {
       fileInfo.file_description += ` ${filter}`;
