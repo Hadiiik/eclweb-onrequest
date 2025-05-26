@@ -58,6 +58,12 @@ export async function updateFileInfo(fileInfo: FileInfo): Promise<UploadResponse
   // نضيف التصنيفات المستخرجة من اسم الملف لمصفوفة التصنيفات مع إزالة التكرار
   const extractedCategories = extractCategoriesFromFileName(fileInfo.file_name);
   fileInfo.categories = Array.from(new Set([...fileInfo.categories, ...extractedCategories]));
+  const filters = [...fileInfo.categories];
+  for (const filter of filters) {
+    if (!fileInfo.file_description.includes(filter)) {
+      fileInfo.file_description += ` ${filter}`;
+    }
+  }
   console.log(fileInfo)
 
   const delay = Math.random() * 3000;

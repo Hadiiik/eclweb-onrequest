@@ -107,6 +107,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
     setIsSubjectsOpen(false);
     setIsTypesOpen(false);
   };
+  const onClear = () => {
+    setSelectedCategory('');
+    setSelectedSubject('');
+    setSelectedType('');
+    setSelectedYear('');
+    setSelectedLocation('');
+    sessionStorage.removeItem('filters');
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -271,7 +279,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         {/* أزرار التطبيق */}
         <div className="flex justify-between gap-2 mt-3">
           <button onClick={handleApply} className="flex-1 py-2 rounded-lg text-sm bg-green-500 text-white hover:bg-green-600">تطبيق الفلاتر</button>
-          <button onClick={onClose} className="flex-1 py-2 rounded-lg text-sm bg-gray-100 text-gray-600 hover:bg-gray-200">إلغاء</button>
+          <button onClick={onClear} className="flex-1 py-2 rounded-lg text-sm bg-gray-100 text-gray-600 hover:bg-gray-200">تنظيف الفلاتر</button>
         </div>
       </div>
     </div>
@@ -279,3 +287,5 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
 };
 
 export default FilterPanel;
+
+
