@@ -132,11 +132,29 @@ export async function POST(req: NextRequest) {
             .order("created_at", { ascending: false })
             .limit(500);
 
-        if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
-        query.or('categories.cs.{"بكلوريا علمي"},categories.cs.{"بكلوريا ادبي"}');
-    } else if (filters.length > 0) {
-        query.contains("categories", filters);
-    }
+
+
+            if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
+    const otherFilters = filters.filter(f => f !== "بكلوريا علمي" && f !== "بكلوريا ادبي");
+
+    const filtersSet1 = ["بكلوريا علمي", ...otherFilters];
+    const filtersSet2 = ["بكلوريا ادبي", ...otherFilters];
+
+    const filter1 = `and(categories.cs.${JSON.stringify(filtersSet1)})`;
+    const filter2 = `and(categories.cs.${JSON.stringify(filtersSet2)})`;
+
+    query.or(`${filter1},${filter2}`);
+
+} else if (filters.length > 0) {
+    query.contains("categories", filters);
+}
+
+
+    //     if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
+    //     query.or('categories.cs.{"بكلوريا علمي"},categories.cs.{"بكلوريا ادبي"}');
+    // } else if (filters.length > 0) {
+    //     query.contains("categories", filters);
+    // }
 
         const { data, error } = await query;
 
@@ -169,7 +187,18 @@ export async function POST(req: NextRequest) {
     }
     // إذا كان يوجد "بكلوريا علمي" و"بكلوريا ادبي" معًا في الفلاتر، أحضر الملفات التي تحتوي على كليهما
     if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
-        query.or('categories.cs.{"بكلوريا علمي"},categories.cs.{"بكلوريا ادبي"}');
+        const otherFilters = filters.filter(f => f !== "بكلوريا علمي" && f !== "بكلوريا ادبي");
+
+    // لبناء سلسلة الشرط، لكل filter نضيف `categories.cs.{filter}`
+    const buildAndCondition = (baseFilter: string, others: string[]) => {
+        const allFilters = [baseFilter, ...others];
+        return `and(${allFilters.map(f => `categories.cs.{${f}}`).join(",")})`;
+    };
+
+    const filter1 = buildAndCondition("بكلوريا علمي", otherFilters);
+    const filter2 = buildAndCondition("بكلوريا ادبي", otherFilters);
+
+    query.or(`${filter1},${filter2}`);
     } else if (filters.length > 0) {
         query.contains("categories", filters);
     }
@@ -177,7 +206,6 @@ export async function POST(req: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
