@@ -60,6 +60,7 @@ export async function uploadFileInfo(fileInfo: FileInfo): Promise<UploadResponse
   fileInfo.categories = Array.from(new Set([...fileInfo.categories, ...extractedCategories]));
   // إضافة الفلاتر إلى وصف الملف ككلمات مفتاحية إذا لم تكن موجودة بالفعل
   const filters = [...fileInfo.categories];
+  fileInfo.file_description += '\n';
   for (const filter of filters) {
     if (!fileInfo.file_description.includes(filter)) {
       fileInfo.file_description += ` ${filter}`;
