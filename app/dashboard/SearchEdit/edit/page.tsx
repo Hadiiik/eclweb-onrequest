@@ -66,13 +66,15 @@ const FileUploadForm = () => {
     subject: string;
     type: string;
     year?: string;
+    location?: string;
   }) => {
     // ضبط التصنيفات المختارة كمصفوفة
     const updatedCategories = [
       filters.category, 
       filters.subject, 
       filters.type, 
-      filters.year
+      filters.year,
+      filters.location
     ].filter((item): item is string => Boolean(item)); // استخدم نوع الحماية
 
     setSelectedCategories(updatedCategories); // ضبطها كمصفوفة
