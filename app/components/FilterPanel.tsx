@@ -10,6 +10,7 @@ interface FilterPanelProps {
     subject: string;
     type: string;
     year?: string;
+    location?: string;
   }) => void;
   isSelected?: boolean;
   initialFilters?: {
@@ -17,6 +18,7 @@ interface FilterPanelProps {
     subject?: string;
     type?: string;
     year?: string;
+    location?: string;
   };
 }
 
@@ -25,17 +27,20 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
   const [selectedYear, setSelectedYear] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+
   const [isSubjectsOpen, setIsSubjectsOpen] = useState(false);
   const [isTypesOpen, setIsTypesOpen] = useState(false);
   const [isYearsOpen, setIsYearsOpen] = useState(false);
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'انكليزي', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ'];
   const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'انكليزي', 'كيمياء'];
   const bacLiterarySubjects = ['ديانة اسلامية', 'انكليزي', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة'];
   const types = ['دورات', 'اوراق عمل', 'اختبارات', 'ملخصات', 'مناهج'];
   const years = Array.from({ length: 11 }, (_, i) => `${2015 + i}`);
+  const locations = ['إدلب', 'دمشق','مجالس'];
 
-  // استرجاع الفلاتر من sessionStorage عند فتح الفلتر
   useEffect(() => {
     const savedFilters = sessionStorage.getItem('filters');
     if (savedFilters) {
@@ -44,26 +49,28 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
       if (filters.subject) setSelectedSubject(filters.subject);
       if (filters.type) setSelectedType(filters.type);
       if (filters.year) setSelectedYear(filters.year);
+      if (filters.location) setSelectedLocation(filters.location);
     }
   }, []);
 
-  // حفظ الفلاتر في sessionStorage عند تغيرها
   useEffect(() => {
     const filters = {
       category: selectedCategory,
       subject: selectedSubject,
       type: selectedType,
       year: selectedYear,
+      location: selectedLocation,
     };
     sessionStorage.setItem('filters', JSON.stringify(filters));
-  }, [selectedCategory, selectedSubject, selectedType, selectedYear]);
+  }, [selectedCategory, selectedSubject, selectedType, selectedYear, selectedLocation]);
 
   const handleApply = () => {
     onApplyFilters({
       category: selectedCategory,
       subject: selectedSubject,
       type: selectedType,
-      year: selectedYear
+      year: selectedYear,
+      location: selectedLocation,
     });
   };
 
@@ -77,18 +84,28 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
     setIsYearsOpen(!isYearsOpen);
     setIsSubjectsOpen(false);
     setIsTypesOpen(false);
+    setIsLocationOpen(false);
   };
 
   const toggleSubjects = () => {
     setIsSubjectsOpen(!isSubjectsOpen);
     setIsYearsOpen(false);
     setIsTypesOpen(false);
+    setIsLocationOpen(false);
   };
 
   const toggleTypes = () => {
     setIsTypesOpen(!isTypesOpen);
     setIsYearsOpen(false);
     setIsSubjectsOpen(false);
+    setIsLocationOpen(false);
+  };
+
+  const toggleLocation = () => {
+    setIsLocationOpen(!isLocationOpen);
+    setIsYearsOpen(false);
+    setIsSubjectsOpen(false);
+    setIsTypesOpen(false);
   };
 
   return (
@@ -125,11 +142,43 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           </div>
         </div>
 
+
+
+        {/* الموقع */}
+        <div className="mb-2">
+          <button
+            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedLocation ? 'bg-green-100' : 'bg-gray-200'}`}
+            onClick={toggleLocation}
+          >
+            <span>{selectedLocation || 'اختر المنهاج'}</span>
+            {isLocationOpen ? <FiChevronUp /> : <FiChevronDown />}
+          </button>
+
+          {isLocationOpen && (
+            <div className="grid grid-cols-2 gap-1.5 mt-2">
+              {locations.map((loc) => (
+                <button
+                  key={loc}
+                  onClick={() => {
+                    setSelectedLocation(selectedLocation === loc ? '' : loc);
+                    setIsLocationOpen(false);
+                  }}
+                  className={`p-1.5 rounded-lg text-xs ${
+                    selectedLocation === loc ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {loc}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* المواد */}
         {selectedCategory && (
           <div className="mb-2">
             <button
-              className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedSubject ? 'bg-green-100' : (isSubjectsOpen ? 'bg-gray-50' : 'bg-gray-50')}`}
+              className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedSubject ? 'bg-green-100' : 'bg-gray-50'}`}
               onClick={toggleSubjects}
             >
               <span>{selectedSubject || 'اختر المادة'}</span>
@@ -142,11 +191,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                   <button
                     key={subject}
                     onClick={() => {
-                      if (selectedSubject === subject) {
-                        setSelectedSubject('');
-                      } else {
-                        setSelectedSubject(subject);
-                      }
+                      setSelectedSubject(selectedSubject === subject ? '' : subject);
                       setIsSubjectsOpen(false);
                     }}
                     className={`p-1.5 rounded-lg text-xs ${
@@ -162,14 +207,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         )}
 
         {/* السنة */}
-        <div className="mb-2 ">
+        <div className="mb-2">
           <button
-            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedYear ? 'bg-green-100' : (isYearsOpen ? 'bg-gray-50' : 'bg-gray-50')}`}
+            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedYear ? 'bg-green-100' : 'bg-gray-50'}`}
             onClick={toggleYears}
           >
-            <span className="text-sm text-gray-600">
-              {selectedYear || 'اختر السنة'}
-            </span>
+            <span>{selectedYear || 'اختر السنة'}</span>
             {isYearsOpen ? <FiChevronUp /> : <FiChevronDown />}
           </button>
 
@@ -179,11 +222,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                 <button
                   key={year}
                   onClick={() => {
-                    if (selectedYear === year) {
-                      setSelectedYear('');
-                    } else {
-                      setSelectedYear(year);
-                    }
+                    setSelectedYear(selectedYear === year ? '' : year);
                     setIsYearsOpen(false);
                   }}
                   className={`p-1.5 rounded-lg text-xs ${
@@ -200,7 +239,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         {/* التصنيف */}
         <div className="mb-2">
           <button
-            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedType ? 'bg-green-100' : (isTypesOpen ? 'bg-gray-50' : 'bg-gray-50')}`}
+            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedType ? 'bg-green-100' : 'bg-gray-50'}`}
             onClick={toggleTypes}
           >
             <span>{selectedType || 'اختر التصنيف'}</span>
@@ -213,11 +252,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                 <button
                   key={type}
                   onClick={() => {
-                    if (selectedType === type) {
-                      setSelectedType('');
-                    } else {
-                      setSelectedType(type);
-                    }
+                    setSelectedType(selectedType === type ? '' : type);
                     setIsTypesOpen(false);
                   }}
                   className={`p-1.5 rounded-lg text-xs ${
@@ -230,6 +265,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
             </div>
           )}
         </div>
+
+        
 
         {/* أزرار التطبيق */}
         <div className="flex justify-between gap-2 mt-3">

@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
         const { data, error } = await query;
 
         if (error) {
-            // console.error("Error fetching data:", error.message);
+            console.error("Error fetching data:", error.message);
             return NextResponse.json({ error: error.message }, { status: 500 });
         }
         return NextResponse.json({ data }, { status: 200 });
@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
     let f = "";
     if (search_bar_query.trim() !== "") {
         const similarWords = generateSimilarWords(search_bar_query);
-        f = Array.from([...similarWords,search_bar_query.split(/\s+/)])
+        f = Array.from(similarWords)
             .flatMap(word => [
                 `file_name.ilike.%${word}%`,
                 `file_description.ilike.%${word}%`
@@ -180,7 +180,8 @@ export async function POST(req: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-        // console.error("Error fetching data:", error.message);
+
+        console.error("Error fetching data:", error.message);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
