@@ -109,6 +109,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
                   nm: encodeURIComponent(result.fileName),
                   desc: encodeURIComponent(result.description || ''),
                   ca: encodeURIComponent(result.created_at || ''),
+                  id: encodeURIComponent(result.file_id || ''), 
                 },
               }}
                 className="p-2 rounded-md hover:bg-gray-100 text-green-600 transition-colors duration-200"

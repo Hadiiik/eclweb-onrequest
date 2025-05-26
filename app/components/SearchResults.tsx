@@ -7,6 +7,7 @@ export interface FileData {
   description?: string;
   filters?: string[];
   created_at?: string;
+  id?: string; // Assuming fileUrl is the ID
 }
 
 interface SearchResultsProps {
@@ -52,6 +53,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
                   nm: encodeURIComponent(result.fileName),
                   desc: encodeURIComponent(result.description || ''),
                   ca: encodeURIComponent(result.created_at || ''),
+                  id: encodeURIComponent(result.id||''), // Assuming fileUrl is the ID
                 },
               }}
               className="flex-1 ml-4 min-w-0 no-underline"

@@ -104,6 +104,7 @@ console.log(
             file_url: string;
             created_at?: string;
             categories?: string[];
+            id?: string;
         };
 
         const formattedData: FileData[] = data.map((item: SearchResultItem) => ({
@@ -111,7 +112,8 @@ console.log(
             description: item.file_description || "",
             fileUrl: item.file_url,
             filters: item.categories || [],
-            created_at:item.created_at||""
+            created_at:item.created_at||"",
+            id: item.id || ""
         }));
         setResult(formattedData);
         sessionStorage.setItem("searchResults", JSON.stringify(formattedData));

@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { FaFilePdf, FaExternalLinkAlt, FaSpinner } from 'react-icons/fa';
+import { FaFilePdf, FaExternalLinkAlt, FaSpinner, FaShareAlt, FaHome } from 'react-icons/fa';
 import Header from '../components/Header';
+import Link from 'next/link';
 
 function getDrivePreviewLink(rawUrl: string): { embedUrl: string; originalUrl: string } {
   let fileId = '';
@@ -39,6 +40,24 @@ function getDrivePreviewLink(rawUrl: string): { embedUrl: string; originalUrl: s
 }
 
 
+const handleNativeShare = (fileName:string,description:string,id:string) => {
+  if (navigator.share) {
+    navigator
+      .share({
+        title: fileName || 'ملف',
+        text: description || 'شاهد هذا الملف',
+        url: `/share_file?id=${id}`,
+      })
+      .catch((error) => {
+        console.error('خطأ في المشاركة:', error);
+      });
+  } else {
+    alert('ميزة المشاركة غير مدعومة في هذا المتصفح');
+  }
+};
+
+
+
 const PreviewFile: React.FC = () => {
   const [embedUrl, setEmbedUrl] = useState<string>('');
   const [originalUrl, setOriginalUrl] = useState<string>('');
@@ -48,6 +67,7 @@ const PreviewFile: React.FC = () => {
   const [fileName, setFileName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [createdAt, setCreatedAt] = useState<string>('');
+  const [fileId, setFileId] = useState<string>('');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -56,10 +76,12 @@ const PreviewFile: React.FC = () => {
     const nmParam = params.get('nm') || '';
     const descParam = params.get('desc') || '';
     const caParam = params.get('ca') || '';
+    const idParam = params.get('id') || '';
 
     setFileName(decodeURIComponent(nmParam));
     setDescription(decodeURIComponent(descParam));
     setCreatedAt(decodeURIComponent(caParam));
+    setFileId(decodeURIComponent(idParam));
 
     if (previewParam) {
       const decodedUrl = decodeURIComponent(previewParam);
@@ -92,6 +114,16 @@ const PreviewFile: React.FC = () => {
   return (
     <>
     <Header/>
+      <div className="max-w-3xl md:mx-auto mx-4 mt-6" dir="rtl">
+      <Link
+      href="/"
+      className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-200"
+     >
+      <FaHome />
+      العودة إلى الصفحة الرئيسية
+    </Link>
+  </div>
+
     <div className="max-w-3xl md:mx-auto mx-4 mt-10 space-y-6" dir='rtl' >
       {/* معلومات الملف تظهر دائماً */}
       <div className={`p-4 border rounded-lg bg-white shadow-md ${embedUrl ? 'border-green-200 hover:bg-green-50' : 'border-yellow-300 bg-yellow-50'}`}>
@@ -127,10 +159,8 @@ const PreviewFile: React.FC = () => {
       {embedUrl && (
         <div className="p-4 border border-green-200 rounded-lg bg-white shadow-md hover:bg-green-50 transition-colors duration-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-800 truncate">
-              معاينة الملف
-            </h3>
 
+          <div className="flex gap-2">
             <a
               href={originalUrl}
               target="_blank"
@@ -140,7 +170,17 @@ const PreviewFile: React.FC = () => {
               <FaExternalLinkAlt size={12} />
               فتح في Google Drive
             </a>
+
+            <button
+              onClick={() => handleNativeShare(fileName, description, fileId)}
+              className="flex items-center gap-1 px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200 transition-colors duration-200"
+            >
+              <FaShareAlt size={14} />
+              مشاركة
+            </button>
           </div>
+        </div>
+
 
           <div className="relative w-full h-[600px] border rounded overflow-hidden">
             {loading && (

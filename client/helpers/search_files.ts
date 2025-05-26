@@ -10,14 +10,12 @@ type SearchResponse = {
 };
 
 // القيم الصالحة
-const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'انكليزي', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ','فرنسي','تركي'];
-const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'انكليزي', 'كيمياء','فرنسي','تركي'];
-const bacLiterarySubjects = ['ديانة اسلامية', 'انكليزي', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة','فرنسي','تركي'];
+const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'انكليزي', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ', 'فرنسي', 'تركي'];
+const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'انكليزي', 'كيمياء', 'فرنسي', 'تركي'];
+const bacLiterarySubjects = ['ديانة اسلامية', 'انكليزي', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة', 'فرنسي', 'تركي'];
 const types = ['دورات', 'اوراق عمل', 'اختبارات', 'ملخصات', 'مناهج'];
 const years = Array.from({ length: 11 }, (_, i) => `${2015 + i}`);
 
-// جميع الفلاتر الممكنة في مصفوفة واحدة بدون تكرار
-// جميع الفلاتر الممكنة في مصفوفة واحدة بدون تكرار
 const allFilters = Array.from(new Set([
   ...ninthSubjects,
   ...bacScientificSubjects,
@@ -32,9 +30,26 @@ const allFilters = Array.from(new Set([
 // تحويل الأرقام العربية إلى إنجليزية
 function convertArabicNumbersToEnglish(str: string): string {
   const arabicNums = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-  return str.replace(/[٠-٩]/g, d => {
-    return arabicNums.indexOf(d).toString();
-  });
+  return str.replace(/[٠-٩]/g, d => arabicNums.indexOf(d).toString());
+}
+
+// تطبيع النص العربي
+function normalizeArabic(str: string): string {
+  return str
+    .replace(/[\u064B-\u0652]/g, '')       // إزالة التشكيل
+    .replace(/^ال/, '')                    // إزالة "ال" من البداية
+    .replace(/[آأإ]/g, 'ا')                // توحيد الهمزات
+    .replace(/ة/g, 'ه')                    // توحيد التاء المربوطة
+    .replace(/ى/g, 'ي')                    // توحيد الألف المقصورة
+    .replace(/ؤ/g, 'و')                    // توحيد همزة واو
+    .replace(/ئ/g, 'ي')                    // توحيد همزة ياء
+    .replace(/ـ/g, '')                     // إزالة التطويل
+    .trim();
+}
+
+// تطبيع كامل للكلمة (بما في ذلك الأرقام)
+function normalizeWord(str: string): string {
+  return normalizeArabic(convertArabicNumbersToEnglish(str));
 }
 
 export async function fetchSearchResults(query: SearchQuery): Promise<SearchResponse> {
@@ -42,21 +57,19 @@ export async function fetchSearchResults(query: SearchQuery): Promise<SearchResp
   const foundFilters = new Set<string>();
 
   for (const wordRaw of words) {
-    const word = convertArabicNumbersToEnglish(wordRaw);
+    const word = normalizeWord(wordRaw);
 
     for (const filter of allFilters) {
-      const filterConverted = convertArabicNumbersToEnglish(filter);
+      const filterNormalized = normalizeWord(filter);
 
-      // قاعدة: لو الكلمة قصيرة جداً (اقل من 3 حروف) نتحقق تطابق تام فقط
       if (word.length < 3) {
-        if (word === filterConverted) {
+        if (word === filterNormalized) {
           foundFilters.add(filter);
         }
       } else {
-        // لو الكلمة طويلة نسمح باحتواء سواء الكلمة في الفلتر أو الفلتر في الكلمة
         if (
-          filterConverted.includes(word) ||
-          word.includes(filterConverted)
+          filterNormalized.includes(word) ||
+          word.includes(filterNormalized)
         ) {
           foundFilters.add(filter);
         }
@@ -64,14 +77,12 @@ export async function fetchSearchResults(query: SearchQuery): Promise<SearchResp
     }
   }
 
-
   const processedQuery: SearchQuery = {
-    search_bar_query: query.search_bar_query.trim(), // لا نزيل شيء من جملة البحث
+    search_bar_query: query.search_bar_query.trim(),
     filters: [...new Set([...query.filters, ...foundFilters])],
     page: query.page,
   };
 
-  // تأخير عشوائي
   const delay = Math.random() * 3000;
   await new Promise(resolve => setTimeout(resolve, delay));
 
@@ -92,7 +103,6 @@ export async function fetchSearchResults(query: SearchQuery): Promise<SearchResp
         data: result.error || "Unknown error occurred",
       };
     }
-
 
     return {
       success: true,
