@@ -33,7 +33,7 @@ function extractEducationalFilters(query: string): string[] {
         return [];
     }
 
-    if (hasBacWord || hasScientific || hasLiterary) {
+    if (hasBacWord || hasScientific ) {
         if (hasScientific) {
             extraFilters.push("بكلوريا علمي");
         }
