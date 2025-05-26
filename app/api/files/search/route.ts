@@ -151,13 +151,14 @@ export async function POST(req: NextRequest) {
     let f = "";
     if (search_bar_query.trim() !== "") {
         const similarWords = generateSimilarWords(search_bar_query);
-        console.log("Similar words generated:", similarWords);
-        f = Array.from(similarWords)
+        f = Array.from([...similarWords,search_bar_query.split(/\s+/)])
             .flatMap(word => [
                 `file_name.ilike.%${word}%`,
                 `file_description.ilike.%${word}%`
             ])
             .join(',');
+            console.log("f", f);
+            console.log("simliar" , similarWords);
     }
 
     // الاستعلام مع البحث في النص والفلاتر
