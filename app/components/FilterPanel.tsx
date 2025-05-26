@@ -34,9 +34,9 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
   const [isYearsOpen, setIsYearsOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
 
-  const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'انكليزي', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ'];
-  const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'انكليزي', 'كيمياء'];
-  const bacLiterarySubjects = ['ديانة اسلامية', 'انكليزي', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة'];
+  const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'انكليزي', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ','فرنسي','تركي'];
+  const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'انكليزي', 'كيمياء','فرنسي','تركي'];
+  const bacLiterarySubjects = ['ديانة اسلامية', 'انكليزي', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة','فرنسي','تركي'];
   const types = ['دورات', 'اوراق عمل', 'اختبارات', 'ملخصات', 'مناهج'];
   const years = Array.from({ length: 11 }, (_, i) => `${2015 + i}`);
   const locations = ['إدلب', 'دمشق','مجالس'];

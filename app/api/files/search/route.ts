@@ -33,18 +33,8 @@ function extractEducationalFilters(query: string): string[] {
         return [];
     }
 
-    if (hasBacWord || hasScientific ) {
-        if (hasScientific) {
-            extraFilters.push("بكلوريا علمي");
-        }
-        if (hasLiterary) {
-            extraFilters.push('بكلوريا ادبي');
-        }
-        if (!hasScientific && !hasLiterary) {
-            // فقط بكالوريا بدون تحديد علمي/أدبي
-            extraFilters.push("بكلوريا علمي", "بكلوريا ادبي");
-        }
-    }
+    if(hasBacWord&&hasScientific) extraFilters.push("بكلوريا علمي");
+    if(hasBacWord&&hasLiterary) extraFilters.push("بكلوريا ادبي");
 
     if (hasTase3) {
         extraFilters.push("تاسع");
@@ -65,9 +55,6 @@ function isOnlyFilterWords(query: string): boolean {
     const allowedWords = new Set([
         "علمي",
         "ادبي", 
-        "بكلوريا",
-        "بكالوريا",
-        "باكالوريا",
         "بكلوريا علمي",
         "بكالوريا علمي",
         "باكالوريا علمي",
@@ -114,6 +101,7 @@ export async function POST(req: NextRequest) {
     // إذا كان البحث يحتوي فقط على كلمات تخص الفلاتر، اجعل البحث النصي فارغ
     const isOnlyFilter = isOnlyFilterWords(search_bar_query);
     if (isOnlyFilter) {
+        
         search_bar_query = "";
     }
 
@@ -132,33 +120,11 @@ export async function POST(req: NextRequest) {
             .order("created_at", { ascending: false })
             .limit(500);
 
-
-
-            if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
-    const otherFilters = filters.filter(f => f !== "بكلوريا علمي" && f !== "بكلوريا ادبي");
-
-    const filtersSet1 = ["بكلوريا علمي", ...otherFilters];
-    const filtersSet2 = ["بكلوريا ادبي", ...otherFilters];
-
-    const filter1 = `and(categories.cs.${JSON.stringify(filtersSet1)})`;
-    const filter2 = `and(categories.cs.${JSON.stringify(filtersSet2)})`;
-
-    query.or(`${filter1},${filter2}`);
-
-} else if (filters.length > 0) {
-    query.contains("categories", filters);
-}
-
-
-    //     if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
-    //     query.or('categories.cs.{"بكلوريا علمي"},categories.cs.{"بكلوريا ادبي"}');
-    // } else if (filters.length > 0) {
-    //     query.contains("categories", filters);
-    // }
-
+        query.contains("categories", filters);
         const { data, error } = await query;
 
         if (error) {
+            console.error("Error fetching files:", error);
             return NextResponse.json({ error: error.message }, { status: 500 });
         }
         return NextResponse.json({ data }, { status: 200 });
@@ -185,23 +151,7 @@ export async function POST(req: NextRequest) {
     if (f) {
         query.or(f);  // إذا كانت f تحتوي على شروط، نضيفها للاستعلام
     }
-    // إذا كان يوجد "بكلوريا علمي" و"بكلوريا ادبي" معًا في الفلاتر، أحضر الملفات التي تحتوي على كليهما
-    if (filters.includes("بكلوريا علمي") && filters.includes("بكلوريا ادبي")) {
-        const otherFilters = filters.filter(f => f !== "بكلوريا علمي" && f !== "بكلوريا ادبي");
-
-    // لبناء سلسلة الشرط، لكل filter نضيف `categories.cs.{filter}`
-    const buildAndCondition = (baseFilter: string, others: string[]) => {
-        const allFilters = [baseFilter, ...others];
-        return `and(${allFilters.map(f => `categories.cs.{${f}}`).join(",")})`;
-    };
-
-    const filter1 = buildAndCondition("بكلوريا علمي", otherFilters);
-    const filter2 = buildAndCondition("بكلوريا ادبي", otherFilters);
-
-    query.or(`${filter1},${filter2}`);
-    } else if (filters.length > 0) {
-        query.contains("categories", filters);
-    }
+    query.contains("categories", filters);
 
     const { data, error } = await query;
 

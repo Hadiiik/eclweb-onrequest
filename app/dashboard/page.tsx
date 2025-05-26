@@ -7,7 +7,7 @@ import Header from "../components/Header";
 import { supabase } from "@/lib/supabase";
 
 
-export const revalidate = 600; // كل 10 دقائق (يمكنك تغيير الرقم حسب حاجتك)
+export const revalidate = 3600; // كل 10 دقائق (يمكنك تغيير الرقم حسب حاجتك)
 
 
 const Dashboard = async () => {
