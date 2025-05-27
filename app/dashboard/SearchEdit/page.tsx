@@ -72,6 +72,7 @@ const SearchContainer = () => {
     }, []);
 
     const onSearch = async (q:string)=>{
+      if(q.trim() == ""&&Filters.length == 0) return;
         setLoading(true);
         const result = await fetchSearchResults({
             search_bar_query:q,

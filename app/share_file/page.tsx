@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaFilePdf, FaExternalLinkAlt, FaSpinner, FaHome } from "react-icons/fa";
+import { FaFilePdf, FaExternalLinkAlt, FaSpinner, FaHome, FaDownload } from "react-icons/fa";
 import Header from "../components/Header";
 import { FaShareAlt } from 'react-icons/fa';
 import Link from "next/link";
@@ -53,6 +53,18 @@ function getDrivePreviewLink(rawUrl: string): { embedUrl: string; originalUrl: s
     originalUrl: rawUrl,
   };
 }
+
+
+
+function getDirectDownloadLink(url: string): string {
+  const driveFileRegex = /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\//;
+  const match = url.match(driveFileRegex);
+  if (match && match[1]) {
+    return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+  }
+  return url;
+}
+
 
 const PreviewFile: React.FC = () => {
   const [embedUrl, setEmbedUrl] = useState<string>("");
@@ -175,7 +187,7 @@ const PreviewFile: React.FC = () => {
             className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors duration-200"
             >
             <FaExternalLinkAlt size={12} />
-            فتح في Google Drive
+            {/* فتح في Google Drive */}
             </a>
 
             <button
@@ -183,8 +195,20 @@ const PreviewFile: React.FC = () => {
             className="flex items-center gap-1 px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200 transition-colors duration-200"
             >
             <FaShareAlt size={14} />
-            مشاركة
+            {/* مشاركة */}
             </button>
+
+            <a
+              href={getDirectDownloadLink(originalUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center px-3 py-1 text-xs bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
+              onClick={e => e.stopPropagation()} // Prevent card click
+              onMouseDown={e => e.stopPropagation()}
+              download
+            >
+              <FaDownload className="ml-1" size={12} />
+            </a>
         </div>
         </div>
 

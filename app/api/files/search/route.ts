@@ -33,8 +33,8 @@ function extractEducationalFilters(query: string): string[] {
         return [];
     }
 
-    if(hasBacWord&&hasScientific) extraFilters.push("بكلوريا علمي");
-    if(hasBacWord&&hasLiterary) extraFilters.push("بكلوريا ادبي");
+    if(hasBacWord&&hasScientific||hasScientific) extraFilters.push("بكلوريا علمي");
+    if(hasBacWord&&hasLiterary||hasLiterary) extraFilters.push("بكلوريا ادبي");
 
     if (hasTase3) {
         extraFilters.push("تاسع");
