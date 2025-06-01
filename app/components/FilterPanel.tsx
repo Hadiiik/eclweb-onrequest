@@ -6,28 +6,21 @@ import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 interface FilterPanelProps {
   onClose: () => void;
   onApplyFilters: (filters: {
-    category: string;
-    subject: string;
-    type: string;
-    year?: string;
-    location?: string;
+    category: string[];
+    subject: string[];
+    type: string[];
+    year: string[];
+    location?: string[];
   }) => void;
-  isSelected?: boolean;
-  initialFilters?: {
-    category?: string;
-    subject?: string;
-    type?: string;
-    year?: string;
-    location?: string;
-  };
+  setIsOpen? : ()=>void
 }
 
-const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedSubject, setSelectedSubject] = useState<string>('');
-  const [selectedType, setSelectedType] = useState<string>('');
-  const [selectedYear, setSelectedYear] = useState<string>('');
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
+const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters ,setIsOpen}) => {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedYears, setSelectedYears] = useState<string[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
 
   const [isSubjectsOpen, setIsSubjectsOpen] = useState(false);
   const [isTypesOpen, setIsTypesOpen] = useState(false);
@@ -41,80 +34,97 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
   const years = Array.from({ length: 11 }, (_, i) => `${2015 + i}`);
   const locations = ['إدلب', 'دمشق','مجالس'];
 
+  // ✅ استرجاع الفلاتر المحفوظة
   useEffect(() => {
-    const savedFilters = sessionStorage.getItem('filters');
-    if (savedFilters) {
-      const filters = JSON.parse(savedFilters);
-      if (filters.category) setSelectedCategory(filters.category);
-      if (filters.subject) setSelectedSubject(filters.subject);
-      if (filters.type) setSelectedType(filters.type);
-      if (filters.year) setSelectedYear(filters.year);
-      if (filters.location) setSelectedLocation(filters.location);
-    }
-  }, []);
+  const savedFilters = sessionStorage.getItem('filters');
+  if (savedFilters) {
+    const filters = JSON.parse(savedFilters);
+    if (filters.category) setSelectedCategories(filters.category);
+    if (filters.subject) setSelectedSubjects(filters.subject);
+    if (filters.type) setSelectedTypes(filters.type);
+    if (filters.year) setSelectedYears(filters.year);
+    if (filters.location) setSelectedLocation(filters.location);
 
-  useEffect(() => {
-    const filters = {
-      category: selectedCategory,
-      subject: selectedSubject,
-      type: selectedType,
-      year: selectedYear,
-      location: selectedLocation,
-    };
-    sessionStorage.setItem('filters', JSON.stringify(filters));
-  }, [selectedCategory, selectedSubject, selectedType, selectedYear, selectedLocation]);
+    // ✅ فتح الأقسام تلقائياً إذا فيها بيانات محفوظة
+    if (filters.subject?.length) setIsSubjectsOpen(true);
+    if (filters.type?.length) setIsTypesOpen(true);
+    if (filters.year?.length) setIsYearsOpen(true);
+    if (filters.location?.length) setIsLocationOpen(true);
+  }
+}, []);
+
+
+const [didMount, setDidMount] = useState(false);
+
+useEffect(() => {
+  const savedFilters = sessionStorage.getItem('filters');
+  if (savedFilters) {
+    const filters = JSON.parse(savedFilters);
+    if (filters.category) setSelectedCategories(filters.category);
+    if (filters.subject) setSelectedSubjects(filters.subject);
+    if (filters.type) setSelectedTypes(filters.type);
+    if (filters.year) setSelectedYears(filters.year);
+    if (filters.location) setSelectedLocation(filters.location);
+  }
+  // بعد التحميل الأول، فعل الكتابة التلقائية
+  setDidMount(true);
+}, []);
+
+useEffect(() => {
+  if (!didMount) return; // لا تحفظ عند أول تحميل
+  const filters = {
+    category: selectedCategories,
+    subject: selectedSubjects,
+    type: selectedTypes,
+    year: selectedYears,
+    location: selectedLocation,
+  };
+  sessionStorage.setItem('filters', JSON.stringify(filters));
+}, [selectedCategories, selectedSubjects, selectedTypes, selectedYears, selectedLocation]);
+
+
+  const getSubjectsByCategory = () => {
+    let allSubjects: Set<string> = new Set();
+    if (selectedCategories.includes('تاسع')) ninthSubjects.forEach(sub => allSubjects.add(sub));
+    if (selectedCategories.includes('بكلوريا علمي')) bacScientificSubjects.forEach(sub => allSubjects.add(sub));
+    if (selectedCategories.includes('بكلوريا ادبي')) bacLiterarySubjects.forEach(sub => allSubjects.add(sub));
+    return Array.from(allSubjects);
+  };
 
   const handleApply = () => {
     onApplyFilters({
-      category: selectedCategory,
-      subject: selectedSubject,
-      type: selectedType,
-      year: selectedYear,
+      category: selectedCategories,
+      subject: selectedSubjects,
+      type: selectedTypes,
+      year: selectedYears,
       location: selectedLocation,
     });
   };
 
-  const getSubjectsByCategory = () => {
-    if (selectedCategory === 'بكلوريا علمي') return bacScientificSubjects;
-    if (selectedCategory === 'بكلوريا ادبي') return bacLiterarySubjects;
-    return ninthSubjects;
+  const toggleSection = (section: string) => {
+    setIsSubjectsOpen(section === 'subjects' ? !isSubjectsOpen : false);
+    setIsTypesOpen(section === 'types' ? !isTypesOpen : false);
+    setIsYearsOpen(section === 'years' ? !isYearsOpen : false);
+    setIsLocationOpen(section === 'location' ? !isLocationOpen : false);
   };
 
-  const toggleYears = () => {
-    setIsYearsOpen(!isYearsOpen);
-    setIsSubjectsOpen(false);
-    setIsTypesOpen(false);
-    setIsLocationOpen(false);
-  };
-
-  const toggleSubjects = () => {
-    setIsSubjectsOpen(!isSubjectsOpen);
-    setIsYearsOpen(false);
-    setIsTypesOpen(false);
-    setIsLocationOpen(false);
-  };
-
-  const toggleTypes = () => {
-    setIsTypesOpen(!isTypesOpen);
-    setIsYearsOpen(false);
-    setIsSubjectsOpen(false);
-    setIsLocationOpen(false);
-  };
-
-  const toggleLocation = () => {
-    setIsLocationOpen(!isLocationOpen);
-    setIsYearsOpen(false);
-    setIsSubjectsOpen(false);
-    setIsTypesOpen(false);
-  };
   const onClear = () => {
-    setSelectedCategory('');
-    setSelectedSubject('');
-    setSelectedType('');
-    setSelectedYear('');
-    setSelectedLocation('');
+    setSelectedCategories([]);
+    setSelectedSubjects([]);
+    setSelectedTypes([]);
+    setSelectedYears([]);
+    setSelectedLocation([]);
     sessionStorage.removeItem('filters');
-  }
+    onApplyFilters({
+      category: [],
+      subject: [],
+      type: [],
+      year: [],
+      location: [],
+    });
+    setIsOpen?.()
+    
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -125,23 +135,22 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           <button onClick={onClose} className="text-gray-500 hover:text-green-600 p-1">✕</button>
         </div>
 
-        {/* الفئة */}
+        {/* الفئات */}
         <div className="mb-3">
           <div className="flex flex-wrap justify-center gap-2">
             {['تاسع', 'بكلوريا علمي', 'بكلوريا ادبي'].map((category) => (
               <button
                 key={category}
                 onClick={() => {
-                  if (selectedCategory === category) {
-                    setSelectedCategory('');
-                    setSelectedSubject('');
+                  if (selectedCategories.includes(category)) {
+                    setSelectedCategories(selectedCategories.filter((c) => c !== category));
                   } else {
-                    setSelectedCategory(category);
-                    setSelectedSubject('');
+                    setSelectedCategories([...selectedCategories, category]);
                   }
+                  setSelectedSubjects([]);
                 }}
                 className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
-                  selectedCategory === category ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  selectedCategories.includes(category) ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 {category}
@@ -150,15 +159,13 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           </div>
         </div>
 
-
-
-        {/* الموقع */}
+        {/* المناهج (الموقع) */}
         <div className="mb-2">
           <button
-            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedLocation ? 'bg-green-100' : 'bg-gray-200'}`}
-            onClick={toggleLocation}
+            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedLocation.length > 0 ? 'bg-green-100' : 'bg-gray-200'}`}
+            onClick={() => toggleSection('location')}
           >
-            <span>{selectedLocation || 'اختر المنهاج'}</span>
+            <span>{selectedLocation.length > 0 ? `تم اختيار ${selectedLocation.length} منهاج` : 'اختر المناهج'}</span>
             {isLocationOpen ? <FiChevronUp /> : <FiChevronDown />}
           </button>
 
@@ -168,11 +175,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                 <button
                   key={loc}
                   onClick={() => {
-                    setSelectedLocation(selectedLocation === loc ? '' : loc);
-                    setIsLocationOpen(false);
+                    if (selectedLocation.includes(loc)) {
+                      setSelectedLocation(selectedLocation.filter(l => l !== loc));
+                    } else {
+                      setSelectedLocation([...selectedLocation, loc]);
+                    }
                   }}
                   className={`p-1.5 rounded-lg text-xs ${
-                    selectedLocation === loc ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    selectedLocation.includes(loc) ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {loc}
@@ -183,13 +193,13 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         </div>
 
         {/* المواد */}
-        {selectedCategory && (
+        {selectedCategories.length > 0 && (
           <div className="mb-2">
             <button
-              className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedSubject ? 'bg-green-100' : 'bg-gray-50'}`}
-              onClick={toggleSubjects}
+              className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedSubjects.length > 0 ? 'bg-green-100' : 'bg-gray-50'}`}
+              onClick={() => toggleSection('subjects')}
             >
-              <span>{selectedSubject || 'اختر المادة'}</span>
+              <span>{selectedSubjects.length > 0 ? `تم اختيار ${selectedSubjects.length} مادة` : 'اختر المادة'}</span>
               {isSubjectsOpen ? <FiChevronUp /> : <FiChevronDown />}
             </button>
 
@@ -199,11 +209,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                   <button
                     key={subject}
                     onClick={() => {
-                      setSelectedSubject(selectedSubject === subject ? '' : subject);
-                      setIsSubjectsOpen(false);
+                      if (selectedSubjects.includes(subject)) {
+                        setSelectedSubjects(selectedSubjects.filter((s) => s !== subject));
+                      } else {
+                        setSelectedSubjects([...selectedSubjects, subject]);
+                      }
                     }}
                     className={`p-1.5 rounded-lg text-xs ${
-                      selectedSubject === subject ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      selectedSubjects.includes(subject) ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     {subject}
@@ -217,10 +230,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
         {/* السنة */}
         <div className="mb-2">
           <button
-            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedYear ? 'bg-green-100' : 'bg-gray-50'}`}
-            onClick={toggleYears}
+            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedYears.length > 0 ? 'bg-green-100' : 'bg-gray-50'}`}
+            onClick={() => toggleSection('years')}
           >
-            <span>{selectedYear || 'اختر السنة'}</span>
+            <span>{selectedYears.length > 0 ? `تم اختيار ${selectedYears.length} سنة` : 'اختر السنة'}</span>
             {isYearsOpen ? <FiChevronUp /> : <FiChevronDown />}
           </button>
 
@@ -230,11 +243,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                 <button
                   key={year}
                   onClick={() => {
-                    setSelectedYear(selectedYear === year ? '' : year);
-                    setIsYearsOpen(false);
+                    if (selectedYears.includes(year)) {
+                      setSelectedYears(selectedYears.filter(y => y !== year));
+                    } else {
+                      setSelectedYears([...selectedYears, year]);
+                    }
                   }}
                   className={`p-1.5 rounded-lg text-xs ${
-                    selectedYear === year ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    selectedYears.includes(year) ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {year}
@@ -244,13 +260,13 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           )}
         </div>
 
-        {/* التصنيف */}
+        {/* التصنيفات */}
         <div className="mb-2">
           <button
-            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedType ? 'bg-green-100' : 'bg-gray-50'}`}
-            onClick={toggleTypes}
+            className={`w-full flex items-center justify-between p-2 rounded-lg ${selectedTypes.length > 0 ? 'bg-green-100' : 'bg-gray-50'}`}
+            onClick={() => toggleSection('types')}
           >
-            <span>{selectedType || 'اختر التصنيف'}</span>
+            <span>{selectedTypes.length > 0 ? `تم اختيار ${selectedTypes.length} تصنيف` : 'اختر التصنيف'}</span>
             {isTypesOpen ? <FiChevronUp /> : <FiChevronDown />}
           </button>
 
@@ -260,11 +276,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
                 <button
                   key={type}
                   onClick={() => {
-                    setSelectedType(selectedType === type ? '' : type);
-                    setIsTypesOpen(false);
+                    if (selectedTypes.includes(type)) {
+                      setSelectedTypes(selectedTypes.filter((t) => t !== type));
+                    } else {
+                      setSelectedTypes([...selectedTypes, type]);
+                    }
                   }}
                   className={`p-1.5 rounded-lg text-xs ${
-                    selectedType === type ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    selectedTypes.includes(type) ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {type}
@@ -274,12 +293,20 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
           )}
         </div>
 
-        
-
-        {/* أزرار التطبيق */}
-        <div className="flex justify-between gap-2 mt-3">
-          <button onClick={handleApply} className="flex-1 py-2 rounded-lg text-sm bg-green-500 text-white hover:bg-green-600">تطبيق الفلاتر</button>
-          <button onClick={onClear} className="flex-1 py-2 rounded-lg text-sm bg-gray-100 text-gray-600 hover:bg-gray-200">تنظيف الفلاتر</button>
+        {/* الأزرار */}
+        <div className="flex justify-between items-center mt-6 mb-2 gap-2">
+          <button
+            onClick={onClear}
+            className="w-1/2 py-1.5 rounded-lg border border-green-400 text-green-500 hover:bg-green-500 hover:text-white transition"
+          >
+            مسح الكل
+          </button>
+          <button
+            onClick={handleApply}
+            className="w-1/2 py-1.5 rounded-lg bg-green-500 text-white hover:bg-green-600 transition"
+          >
+            تطبيق الفلاتر
+          </button>
         </div>
       </div>
     </div>
@@ -287,5 +314,3 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters }) =>
 };
 
 export default FilterPanel;
-
-

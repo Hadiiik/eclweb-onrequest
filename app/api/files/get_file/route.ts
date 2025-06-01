@@ -1,8 +1,10 @@
 import { supabase } from "@/lib/supabase";
+import { rateLimiterMiddleware } from "@/middleware/rateLimiterMiddleware";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest){
-    console.log("GET request to get_file route");
+    const rateLimitResponse = await rateLimiterMiddleware(req);
+    if (rateLimitResponse) return rateLimitResponse;
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
 

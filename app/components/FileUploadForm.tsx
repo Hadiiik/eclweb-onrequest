@@ -42,22 +42,22 @@ const FileUploadForm = () => {
   };
 
   const handleApplyFilters = (filters: {
-    category: string;
-    subject: string;
-    type: string;
-    year?: string;
-    location?: string;
+    category: string[];
+    subject: string[];
+    type: string[];
+    year: string[];
+    location?: string[];
   }) => {
-    // ضبط التصنيفات المختارة كمصفوفة
+    // دمج جميع التصنيفات المختارة في مصفوفة واحدة
     const updatedCategories = [
-      filters.category, 
-      filters.subject, 
-      filters.type, 
-      filters.year,
-      filters.location
-    ].filter((item): item is string => Boolean(item)); // استخدم نوع الحماية
+      ...(filters.category || []),
+      ...(filters.subject || []),
+      ...(filters.type || []),
+      ...(filters.year || []),
+      ...(filters.location || [])
+    ].flat();
 
-    setSelectedCategories(updatedCategories); // ضبطها كمصفوفة
+    setSelectedCategories(updatedCategories as string[]);
     setShowFilterPanel(false);
   };
 
@@ -142,6 +142,7 @@ const FileUploadForm = () => {
         <FilterPanel
           onClose={() => setShowFilterPanel(false)}
           onApplyFilters={handleApplyFilters}
+          setIsOpen={() => setShowFilterPanel(true)}
         />
       )}
     </div>

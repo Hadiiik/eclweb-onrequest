@@ -8,9 +8,11 @@ interface SearchProps {
   placeholder?: string;
   onSearch?: (query: string) => void;
   onFilter?: (filters: {
-    category: string;
-    subject: string;
-    type: string;
+    category: string[];
+    subject: string[];
+    type: string[];
+    year: string[];
+    location?: string[];
   }) => void;
   onType? : (text:string) => void;
   isSelectedFilters?: boolean; 
@@ -36,9 +38,11 @@ const Search: React.FC<SearchProps> = ({
   };
 
   const handleApplyFilters = (filters: {
-    category: string;
-    subject: string;
-    type: string;
+    category: string[];
+    subject: string[];
+    type: string[];
+    year: string[];
+    location?: string[];
   }) => {
     onFilter?.(filters);
     setShowFilterPanel(false);
@@ -95,6 +99,7 @@ const Search: React.FC<SearchProps> = ({
         <FilterPanel
           onClose={() => setShowFilterPanel(false)}
           onApplyFilters={handleApplyFilters}
+          setIsOpen={()=> setShowFilterPanel(true)}
         />
       )}
     </>
