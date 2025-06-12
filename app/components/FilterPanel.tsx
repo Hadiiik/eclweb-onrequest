@@ -30,7 +30,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onClose, onApplyFilters ,setI
   const ninthSubjects = ['عربي', 'علوم', 'رياضيات', 'انكليزي', 'ديانة اسلامية', 'فيزياء', 'كيمياء', 'جغرافيا', 'تاريخ','فرنسي','تركي'];
   const bacScientificSubjects = ['رياضيات', 'فيزياء', 'علوم', 'عربي', 'ديانة اسلامية', 'انكليزي', 'كيمياء','فرنسي','تركي'];
   const bacLiterarySubjects = ['ديانة اسلامية', 'انكليزي', 'عربي', 'تاريخ', 'جغرافيا', 'فلسفة','فرنسي','تركي'];
-  const types = ['دورات', 'اوراق عمل', 'اختبارات', 'ملخصات', 'مناهج'];
+  const types = ['دورات', 'اختبارات', ' ملخصات و نوط', 'مناهج'];
   const years = Array.from({ length: 11 }, (_, i) => `${2015 + i}`);
   const locations = ['إدلب', 'دمشق','مجالس'];
 
@@ -84,7 +84,7 @@ useEffect(() => {
 
 
   const getSubjectsByCategory = () => {
-    let allSubjects: Set<string> = new Set();
+    const allSubjects: Set<string> = new Set();
     if (selectedCategories.includes('تاسع')) ninthSubjects.forEach(sub => allSubjects.add(sub));
     if (selectedCategories.includes('بكلوريا علمي')) bacScientificSubjects.forEach(sub => allSubjects.add(sub));
     if (selectedCategories.includes('بكلوريا ادبي')) bacLiterarySubjects.forEach(sub => allSubjects.add(sub));
