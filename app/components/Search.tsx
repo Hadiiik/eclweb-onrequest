@@ -67,31 +67,34 @@ const Search: React.FC<SearchProps> = ({
             className="w-full py-2 px-4 pr-20 rounded-full border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 transition-all duration-200 md:text-base text-sm"
             dir="rtl"
           />
-          
+
+          {/* زر البحث */}
           <button
             type="submit"
-            className="absolute left-3 text-green-600 hover:text-green-700 focus:outline-none"
+            className="absolute right-3 text-green-600 hover:text-green-700 focus:outline-none"
             aria-label="بحث"
           >
             <FiSearch className="md:size-5 size-4" />
           </button>
-          
+
+          {/* زر الفلترة */}
           <button
             type="button"
             onClick={handleFilterClick}
-            className="absolute left-10 text-green-600 hover:text-green-700 focus:outline-none"
+            className="absolute right-10 text-green-600 hover:text-green-700 focus:outline-none mt-2"
             aria-label="فلتر"
           >
             <div className="relative inline-block">
-            {!isSelectedFilters&&<FiFilter className="md:size-5 size-4" />}
-            {isSelectedFilters && (
-            <>
-              <FiFilter className="md:size-5 size-4" />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
-            </>
-            )}
+              {!isSelectedFilters && <FiFilter className="md:size-5 size-4" />}
+              {isSelectedFilters && (
+                <>
+                  <FiFilter className="md:size-5 size-4" />
+                  <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+                </>
+              )}
             </div>
           </button>
+
         </div>
       </form>
 

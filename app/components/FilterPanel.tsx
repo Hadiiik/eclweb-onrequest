@@ -87,7 +87,7 @@ useEffect(() => {
     const allSubjects: Set<string> = new Set();
     if (selectedCategories.includes('تاسع')) ninthSubjects.forEach(sub => allSubjects.add(sub));
     if (selectedCategories.includes('بكلوريا علمي')) bacScientificSubjects.forEach(sub => allSubjects.add(sub));
-    if (selectedCategories.includes('بكلوريا ادبي')) bacLiterarySubjects.forEach(sub => allSubjects.add(sub));
+    if (selectedCategories.includes('بكلوريا أدبي')) bacLiterarySubjects.forEach(sub => allSubjects.add(sub));
     return Array.from(allSubjects);
   };
 
@@ -138,7 +138,7 @@ useEffect(() => {
         {/* الفئات */}
         <div className="mb-3">
           <div className="flex flex-wrap justify-center gap-2">
-            {['تاسع', 'بكلوريا علمي', 'بكلوريا ادبي'].map((category) => (
+            {['تاسع', 'بكلوريا علمي', 'بكلوريا أدبي'].map((category) => (
               <button
                 key={category}
                 onClick={() => {
