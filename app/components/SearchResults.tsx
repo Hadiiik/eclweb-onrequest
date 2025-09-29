@@ -40,7 +40,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
 // مكون منفصل لكل نتيجة بحث
 const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
   const [showAllTags, setShowAllTags] = useState(false);
-  const maxVisibleTags = 3;
+  const maxVisibleTags = 4;
 
   const toggleTags = () => {
     setShowAllTags(!showAllTags);
@@ -62,22 +62,23 @@ const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
         className="block no-underline"
       >
         <div className="p-4 sm:p-6 text-right">
-          {/* العنوان مع أيقونة */}
+          {/*العنوان*/}
           <div className="flex items-start gap-3 mb-3">
-            <h3 className="text-lg font-bold text-gray-800 leading-snug break-words flex-1">
-              {result.fileName}
-            </h3>
+          <h3 className="text-[14px] font-bold text-gray-800 leading-snug break-words truncate flex-1">
+            {result.fileName}
+          </h3>
+
           </div>
 
           {/* الوصف */}
           {result.description && (
-            <p className="mt-3 text-sm leading-relaxed text-gray-600 break-words line-clamp-2">
+            <p className="mt-3 text-[12px] leading-relaxed text-gray-600 break-words line-clamp-2">
               {result.description}
             </p>
           )}
 
           {/* المعلومات الإضافية */}
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
             {/* التاريخ */}
             {result.created_at && (
               <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -93,12 +94,12 @@ const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
 
       {/* قسم التصنيفات */}
       {result.filters && result.filters.length > 0 && (
-        <div className="px-4 sm:px-6 pb-3 border-t border-gray-100 pt-3">
+        <div className="px-4 sm:px-6 pb-1 border-t border-gray-100 pt-1">
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <div className="flex items-center gap-2 text-[14px] font-medium text-gray-700">
               <FaTags size={14} className="text-blue-500" />
               <span>التصنيفات</span>
-              <span className="bg-gray-100 text-gray-600 rounded-full px-2 py-0.5 text-xs">
+              <span className="bg-gray-100 text-gray-600 rounded-full px-2 py-0.5 text-sx">
                 {result.filters.length}
               </span>
             </div>
@@ -130,7 +131,7 @@ const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
               .map((filter, idx) => (
                 <span
                   key={idx}
-                  className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
+                  className="rounded-lg border border-blue-100 bg-blue-50/50 px-3 py-1 text-[10px] font-medium text-blue-700 shadow-lg backdrop-blur-md transition-colors hover:bg-blue-100/60"
                 >
                   {filter}
                 </span>
@@ -140,7 +141,7 @@ const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
       )}
 
       {/* قسم الإجراءات */}
-      <div className="px-4 pb-4 sm:px-6 border-t border-gray-100 pt-4">
+      <div className="px-4 pb-2 sm:px-6 border-t border-gray-100 pt-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* التقييم */}
@@ -161,7 +162,7 @@ const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
                   id: encodeURIComponent(result.id || ""),
                 },
               }}
-              className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-600 active:bg-emerald-700 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#006f3c] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-600 active:bg-emerald-700 transition-colors"
               aria-label={`معاينة ${result.fileName}`}
             >
               <FaEye size={16} />
@@ -170,7 +171,7 @@ const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
             <a
               href={getDirectDownloadLink(result.fileUrl)}
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-600 active:bg-emerald-700 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#006f3c] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-600 active:bg-emerald-700 transition-colors"
               download
               aria-label={`تحميل ${result.fileName}`}
             >

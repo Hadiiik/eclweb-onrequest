@@ -159,11 +159,15 @@ const SearchContainer = () => {
           isSelectedFilters={Filters.length > 0}
         />
       </div>
-      <div className="p-4 my-4 mx-3">
-        {/* إضافة هوامش داخلية وخارجية مناسبة */}
-        {!loading && <SearchResults results={results} error_message={error_message} />}
-        {loading && <SearchResultsSkeleton />}
+      <div className="flex items-center justify-center">
+        <div className="my-4 w-full max-w-2xl p-1">
+          
+          {!loading && <div dir="rtl"><SearchResults results={results} error_message={error_message} /></div>}
+          
+          {loading && <SearchResultsSkeleton />}
+        </div>
       </div>
+
     </>
   );
 };
@@ -172,22 +176,52 @@ export default SearchContainer;
 
 const SearchResultsSkeleton: React.FC = () => {
   return (
-    <div className="space-y-2 mt-3">
+    <div className="space-y-4 mt-4" dir="rtl">
       {[...Array(5)].map((_, index) => (
-        <div
+        <article
           key={index}
-          className="flex items-center justify-between p-3 border border-green-100 rounded-full bg-white animate-pulse shadow-sm"
+          className="group rounded-xl border border-gray-100 bg-white shadow-sm p-4 sm:p-6 animate-pulse"
         >
-          {/* شكل مستطيل مكان النص */}
-          <div className="flex-1 mr-2 mx-3.5">
-            <div className="h-4 bg-gray-200 rounded-md w-3/4 mb-1" />
-            <div className="h-3 bg-gray-100 rounded-md w-1/2" />
+          {/* العنوان */}
+          <div className="flex items-start gap-3 mb-3">
+            <div className="h-5 bg-gray-200 rounded-md w-2/3" />
           </div>
 
-          {/* دائرة تمثل الأيقونة */}
-          <div className="w-6 h-6 bg-gray-200 rounded-full" />
-        </div>
+          {/* الوصف */}
+          <div className="space-y-2 mb-4">
+            <div className="h-3 bg-gray-200 rounded-md w-full" />
+            <div className="h-3 bg-gray-100 rounded-md w-5/6" />
+          </div>
+
+          {/* المعلومات الإضافية */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-3 bg-gray-200 rounded-md w-20" />
+          </div>
+
+          {/* التصنيفات */}
+          <div className="border-t border-gray-100 pt-3 mt-3">
+            <div className="flex flex-wrap gap-2">
+              <div className="h-6 bg-gray-200 rounded-lg w-16" />
+              <div className="h-6 bg-gray-200 rounded-lg w-12" />
+              <div className="h-6 bg-gray-200 rounded-lg w-20" />
+            </div>
+          </div>
+
+          {/* الإجراءات */}
+          <div className="border-t border-gray-100 pt-4 mt-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-20 bg-gray-200 rounded-md" />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 bg-gray-200 rounded-full" />
+              <div className="h-8 w-8 bg-gray-200 rounded-full" />
+              <div className="h-8 w-8 bg-gray-200 rounded-full" />
+            </div>
+          </div>
+        </article>
       ))}
     </div>
   );
 };
+
