@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { FaFilePdf, FaExternalLinkAlt, FaSpinner, FaShareAlt, FaHome, FaDownload } from 'react-icons/fa';
 import Header from '../components/Header';
 import Link from 'next/link';
-
+import Rating from '../components/Rating';
+import ReportProblem from '../components/ReportProblem';
 function getDrivePreviewLink(rawUrl: string): { embedUrl: string; originalUrl: string } {
   let fileId = '';
 
@@ -198,13 +199,21 @@ const PreviewFile: React.FC = () => {
               onMouseDown={e => e.stopPropagation()}
               download
             >
-              <FaDownload className="ml-1" size={12} />
+              <FaDownload size={13} />
             </a>
+            <ReportProblem id={fileId}/>
           </div>
         </div>
-
+            <div>
+              <p>قم بتقييم الملف :</p>
+              <Rating
+                id={fileId}
+                size={20}
+              />
+            </div>
 
           <div className="relative w-full h-[600px] border rounded overflow-hidden">
+
             {loading && (
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 z-10">
                 <FaSpinner className="animate-spin text-green-500" size={30} />

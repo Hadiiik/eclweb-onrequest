@@ -1,5 +1,8 @@
 import Link from 'next/link';
-import { FaDownload } from 'react-icons/fa';
+import { FaDownload, FaCalendarAlt, FaTags, FaChevronDown, FaChevronUp,FaEye } from 'react-icons/fa';
+import { useState } from 'react';
+import RatingDisplay from './RatingDisplay';
+import ReportProblem from './ReportProblem';
 
 export interface FileData {
   fileName: string;
@@ -7,7 +10,7 @@ export interface FileData {
   description?: string;
   filters?: string[];
   created_at?: string;
-  id?: string; // Assuming fileUrl is the ID
+  id?: string;
 }
 
 interface SearchResultsProps {
@@ -23,92 +26,163 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, error_message })
       </div>
     );
   }
+  // حالة: لدينا نتائج
+  return (
+    <div className="mt-4 space-y-4" dir="rtl">
+      {results?.map((result, index) => (
+        <SearchResultItem key={index} result={result} />
+      ))}
+    </div>
+  );
+};
+
+
+// مكون منفصل لكل نتيجة بحث
+const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
+  const [showAllTags, setShowAllTags] = useState(false);
+  const maxVisibleTags = 4;
+
+  const toggleTags = () => {
+    setShowAllTags(!showAllTags);
+  };
 
   return (
-    <div className="space-y-4 mt-4" >
-      {results.map((result, index) => (
-        <div
-          key={index}
-          className="flex flex-col p-4 border border-green-200 rounded-lg bg-white hover:bg-green-50 transition-colors duration-200 shadow-md"
-        >
-          <div className="flex items-center justify-between">
-            {/* زر التحميل على اليسار */}
-            <a
-              href={getDirectDownloadLink(result.fileUrl)}
-              rel="noopener noreferrer"
-              className="flex items-center px-3 py-1 text-xs bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
-              onClick={e => e.stopPropagation()} // Prevent card click
-              onMouseDown={e => e.stopPropagation()}
-              download
-            >
-              <FaDownload className="ml-1" size={12} />
-            </a>
+    <article className="group rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+      <Link
+        href={{
+          pathname: '/preview',
+          query: {
+            pre: encodeURIComponent(result.fileUrl),
+            nm: encodeURIComponent(result.fileName),
+            desc: encodeURIComponent(result.description || ''),
+            ca: encodeURIComponent(result.created_at || ''),
+            id: encodeURIComponent(result.id || ''),
+          },
+        }}
+        className="block no-underline"
+      >
+        <div className="p-4 sm:p-6 text-right">
+          {/*العنوان*/}
+          <div className="flex items-start gap-3 mb-3">
+          <h3 className="text-[14px] font-bold text-gray-800 leading-snug break-words truncate flex-1">
+            {result.fileName}
+          </h3>
 
-            {/* المحتوى منحاز لليمين */}
-              <Link
+          </div>
+
+          {/* الوصف */}
+          {result.description && (
+            <p className="mt-3 text-[12px] leading-relaxed text-gray-600 break-words line-clamp-2">
+              {result.description}
+            </p>
+          )}
+
+          {/* المعلومات الإضافية */}
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+            {/* التاريخ */}
+            {result.created_at && (
+              <div className="flex items-center gap-1 text-xs text-gray-500">
+                <FaCalendarAlt size={12} />
+                <time dateTime={result.created_at}>
+                  {formatArabicDate(result.created_at)}
+                </time>
+              </div>
+            )}
+          </div>
+        </div>
+      </Link>
+
+      {/* قسم التصنيفات */}
+      {result.filters && result.filters.length > 0 && (
+        <div className="px-4 sm:px-6 pb-1 border-t border-gray-100 pt-1">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2 text-[14px] font-medium text-gray-700">
+              <FaTags size={14} className="text-blue-500" />
+              <span>التصنيفات</span>
+              <span className="bg-gray-100 text-gray-600 rounded-full px-2 py-0.5 text-sx">
+                {result.filters.length}
+              </span>
+            </div>
+            
+            {result.filters.length > maxVisibleTags && (
+              <button
+                onClick={toggleTags}
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                aria-expanded={showAllTags}
+              >
+                {showAllTags ? (
+                  <>
+                    <span>إخفاء</span>
+                    <FaChevronUp size={10} />
+                  </>
+                ) : (
+                  <>
+                    <span>عرض الكل</span>
+                    <FaChevronDown size={10} />
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            {result.filters
+              .slice(0, showAllTags ? result.filters.length : maxVisibleTags)
+              .map((filter, idx) => (
+                <span
+                  key={idx}
+                  className="rounded-lg border border-blue-100 bg-blue-50/50 px-3 py-1 text-[10px] font-medium text-blue-700 shadow-lg backdrop-blur-md transition-colors hover:bg-blue-100/60"
+                >
+                  {filter}
+                </span>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* قسم الإجراءات */}
+      <div className="px-4 pb-2 sm:px-6 border-t border-gray-100 pt-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {/* التقييم */}
+            <RatingDisplay rating={0} />
+
+          </div>
+          
+          <div className="flex items-center gap-2">
+
+            <Link
               href={{
-                pathname: '/preview',
+                pathname: "/preview",
                 query: {
                   pre: encodeURIComponent(result.fileUrl),
                   nm: encodeURIComponent(result.fileName),
-                  desc: encodeURIComponent(result.description || ''),
-                  ca: encodeURIComponent(result.created_at || ''),
-                  id: encodeURIComponent(result.id||''), // Assuming fileUrl is the ID
+                  desc: encodeURIComponent(result.description || ""),
+                  ca: encodeURIComponent(result.created_at || ""),
+                  id: encodeURIComponent(result.id || ""),
                 },
               }}
-              className="flex-1 ml-4 min-w-0 no-underline"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#006f3c] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-600 active:bg-emerald-700 transition-colors"
+              aria-label={`معاينة ${result.fileName}`}
             >
-
-              <div className="flex items-center cursor-pointer">
-                <div className="text-right flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-gray-800 break-words">
-                    {result.fileName}
-                    </h3>
-                  {result.description && (
-                    <p className="text-gray-500 text-xs mt-1 break-words" dir='rtl'>
-                      {result.description}
-                    </p>
-                  )}
-                  {result.created_at && (
-                    <div className="">
-                      <span className="text-green-500 text-xs">
-                        تاريخ الاصدار:{" "}
-                        {(() => {
-                          const date = new Date(result.created_at!);
-                          const monthsAr = [
-                            "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
-                            "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
-                          ];
-                          const day = date.getDate();
-                          const month = monthsAr[date.getMonth()];
-                          const year = date.getFullYear();
-                          return `${day} ${month} ${year}`;
-                        })()}
-                      </span>
-                    </div>
-                  )}
-                  {result.filters && result.filters.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2 justify-end">
-                      {result.filters.map((filter, idx) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full"
-                        >
-                          {filter}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="mr-2 text-red-500">
-                  {/* <FaFilePdf size={18} /> */}
-                </div>
-              </div>
+              <FaEye size={16} />
             </Link>
+            {/* زر التحميل */}
+            <a
+              href={getDirectDownloadLink(result.fileUrl)}
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#006f3c] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-600 active:bg-emerald-700 transition-colors"
+              download
+              aria-label={`تحميل ${result.fileName}`}
+            >
+              <FaDownload size={15} />
+            </a>
+            {/* زر الإبلاغ عن مشكلة */}
+            <ReportProblem id={result.id} />
           </div>
         </div>
-      ))}
-    </div>
+      </div>
+    </article>
   );
 };
 
@@ -121,4 +195,16 @@ function getDirectDownloadLink(url: string): string {
     return `https://drive.google.com/uc?export=download&id=${match[1]}`;
   }
   return url;
+}
+
+function formatArabicDate(iso?: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+  const year = d.getFullYear();
+
+  return `${day}/${month}/${year}`;
 }

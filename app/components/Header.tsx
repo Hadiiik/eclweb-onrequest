@@ -3,7 +3,8 @@ import React from 'react';
 
 const Header = () => {
   return (
-    <header className="relative w-full py-6 bg-gradient-to-r from-green-600 via-emerald-500 to-teal-400 flex flex-col items-center justify-center text-white shadow-lg">
+    <header className="relative w-full py-6 bg-gradient-to-r from-[#002c16] via-[#006f3c] to-[#00ff9f] flex flex-col items-center justify-center text-white shadow-lg">
+
       {/* Info Icon Link */}
       <Link
         href={"/info"}

@@ -61,7 +61,7 @@ function isOnlyFilterWords(query: string): boolean {
         "بكلورياادبي",
         "بكالوريا ادبي",
         "باكالوريا ادبي",   
-        "ادبي",
+        "أدبي",
         "تاسع"
     ]);
 
