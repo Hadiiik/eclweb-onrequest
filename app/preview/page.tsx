@@ -208,7 +208,7 @@ const PreviewFile: React.FC = () => {
               <p>قم بتقييم الملف :</p>
               <Rating
                 id={fileId}
-                size={20}
+                // size={20}
               />
             </div>
 

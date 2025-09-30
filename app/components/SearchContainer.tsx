@@ -5,6 +5,7 @@ import Search from "./Search";
 import SearchResults, { FileData } from "./SearchResults";
 import { fetchSearchResults } from "@/client/helpers/search_files";
 import ToastNotification from "./ToastNotification";
+import { rankBySimilarity } from "@/client/helpers/rankBySimilarity";
 
 type Filters = {
   category: string[];
@@ -63,6 +64,7 @@ const SearchContainer = () => {
     if (storedResults) {
       const parsedResults = JSON.parse(storedResults);
       setResult(parsedResults);
+      // console.log(results)
     }
   }, []);
 
@@ -102,6 +104,7 @@ const SearchContainer = () => {
       created_at?: string;
       categories?: string[];
       id?: string;
+      average_rating?: number|string;
     };
 
     const formattedData: FileData[] = data.map((item: SearchResultItem) => ({
@@ -111,8 +114,14 @@ const SearchContainer = () => {
       filters: item.categories || [],
       created_at: item.created_at || "",
       id: item.id || "",
+      rating: item.average_rating || 0,
+
     }));
-    setResult(formattedData);
+    
+    const sortedData = rankBySimilarity(formattedData, q);
+    // console.log(sortedData)
+    setResult(sortedData);
+
     sessionStorage.setItem("searchResults", JSON.stringify(formattedData));
     setLoading(false);
   };

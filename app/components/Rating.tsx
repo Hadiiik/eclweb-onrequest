@@ -31,12 +31,21 @@ const Rating: React.FC<RatingProps> = ({
           setTempRating(stored.rating);
         }
       })
-      .catch(console.error);
+      .catch();
   }, [id]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    
     setRating(tempRating); // اعتمد القيمة المؤقتة
-    if (ip) saveRating(id, ip, tempRating).catch(console.error);
+    if (ip) saveRating(id, ip, tempRating).catch();
+       await fetch("/api/rate_file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fileId: id, rating: tempRating }),
+      });
+      
     setOpen(false);
   };
 
