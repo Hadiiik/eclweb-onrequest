@@ -11,6 +11,7 @@ export interface FileData {
   filters?: string[];
   created_at?: string;
   id?: string;
+  rating?: number|string;
 }
 
 interface SearchResultsProps {
@@ -145,7 +146,7 @@ const SearchResultItem: React.FC<{ result: FileData }> = ({ result }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* التقييم */}
-            <RatingDisplay rating={0} />
+            <RatingDisplay rating={parseFloat(String(result.rating || "0"))} />
 
           </div>
           

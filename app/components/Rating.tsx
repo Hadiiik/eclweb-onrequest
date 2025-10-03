@@ -32,17 +32,12 @@ const Rating: React.FC<RatingProps> = ({
           setTempRating(stored.rating);
         }
       })
-      .catch(console.error);
+      .catch();
   }, [id]);
 
-const handleSave = () => {
-  setLoading(true);
-
-  setTimeout(() => {
+  const handleSave = () => {
     setRating(tempRating); // اعتمد القيمة المؤقتة
     if (ip) saveRating(id, ip, tempRating).catch(console.error);
-
-    setLoading(false);
     setOpen(false);
   }, 2000);
 };

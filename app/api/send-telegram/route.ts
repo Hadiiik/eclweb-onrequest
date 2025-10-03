@@ -1,6 +1,9 @@
+import { rateLimiterMiddleware } from "@/middleware/rateLimiterMiddleware";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  const rateLimitResponse = await rateLimiterMiddleware(req);
+      if (rateLimitResponse) return rateLimitResponse;
   try {
     const { text } = await req.json();
 

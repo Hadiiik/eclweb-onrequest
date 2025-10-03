@@ -138,7 +138,7 @@ useEffect(() => {
         {/* الفئات */}
         <div className="mb-3">
           <div className="flex flex-wrap justify-center gap-2">
-            {['تاسع', 'بكلوريا علمي', 'بكلوريا ادبي'].map((category) => (
+            {['تاسع', 'بكلوريا علمي', 'بكلوريا أدبي'].map((category) => (
               <button
                 key={category}
                 onClick={() => {

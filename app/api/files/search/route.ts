@@ -156,6 +156,7 @@ export async function POST(req: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
+        console.error("Error fetching files2:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
