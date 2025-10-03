@@ -17,7 +17,6 @@ const Rating: React.FC<RatingProps> = ({
   const [tempRating, setTempRating] = useState(initialRating); // القيمة المؤقتة
   const [open, setOpen] = useState(false);
   const [ip, setIp] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); // ✅ حالة التحميل
 
   useEffect(() => {
     fetch("https://api.ipify.org?format=json")
@@ -35,13 +34,20 @@ const Rating: React.FC<RatingProps> = ({
       .catch();
   }, [id]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    
     setRating(tempRating); // اعتمد القيمة المؤقتة
-    if (ip) saveRating(id, ip, tempRating).catch(console.error);
+    if (ip) saveRating(id, ip, tempRating).catch();
+       await fetch("/api/rate_file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fileId: id, rating: tempRating }),
+      });
+      
     setOpen(false);
-  }, 2000);
-};
-
+  };
 
   const renderStar = (index: number) => {
     const starPosition = maxRating - index;
@@ -125,40 +131,10 @@ const Rating: React.FC<RatingProps> = ({
               </button>
               <button
                 onClick={handleSave}
-                disabled={loading}
-                className={`px-6 py-2 rounded-lg shadow flex items-center justify-center gap-2 transition 
-                  ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"}
-                `}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
               >
-                {loading ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      ></path>
-                    </svg>
-                    <span>جاري الحفظ...</span>
-                  </>
-                ) : (
-                  "تم"
-                )}
+                تم
               </button>
-
             </div>
           </div>
         </div>

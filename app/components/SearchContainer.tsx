@@ -6,7 +6,7 @@ import SearchResults, { FileData } from "./SearchResults";
 import { fetchSearchResults } from "@/client/helpers/search_files";
 import ToastNotification from "./ToastNotification";
 import { rankBySimilarity } from "@/client/helpers/rankBySimilarity";
-
+import FloatingNewsLink from "./FloatingNewsLink";
 type Filters = {
   category: string[];
   subject: string[];
