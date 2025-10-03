@@ -5,7 +5,7 @@ import Search from "./Search";
 import SearchResults, { FileData } from "./SearchResults";
 import { fetchSearchResults } from "@/client/helpers/search_files";
 import ToastNotification from "./ToastNotification";
-
+import FloatingNewsLink from "./FloatingNewsLink";
 type Filters = {
   category: string[];
   subject: string[];
@@ -150,15 +150,21 @@ const SearchContainer = () => {
           isError={true}
         />
       )}
-      <div className="px-4">
-        {/* إضافة padding جانبي للبحث على الهواتف */}
-        <Search
-          onSearch={onSearch}
-          onFilter={onFilter}
-          onType={onType}
-          isSelectedFilters={Filters.length > 0}
-        />
+      <div className="w-full overflow-x-hidden">
+        <div className="px-4 md:px-6 lg:px-8 pt-3 md:pt-4">
+          <div className="mx-auto w-full max-w-3xl">
+            <Search
+              onSearch={onSearch}
+              onFilter={onFilter}
+              onType={onType}
+              isSelectedFilters={Filters.length > 0}
+            />
+          </div>
+        </div>
       </div>
+
+      <FloatingNewsLink/>
+
       <div className="flex items-center justify-center">
         <div className="my-4 w-full max-w-2xl p-1">
           
