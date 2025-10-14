@@ -2,28 +2,28 @@
 import React, { useEffect, useState } from "react";
 import { FaFilePdf, FaExternalLinkAlt, FaSpinner, FaHome, FaDownload } from "react-icons/fa";
 import Header from "../components/Header";
-import { FaShareAlt } from 'react-icons/fa';
+import { FaShareAlt } from "react-icons/fa";
 import Link from "next/link";
+import Rating from "../components/Rating";
+import ReportProblem from "../components/ReportProblem";
 
-
-const handleNativeShare = (fileName:string,description:string) => {
+const handleNativeShare = (fileName: string, description: string) => {
   if (navigator.share) {
     navigator
       .share({
-        title: fileName || 'ملف',
-        text: description || '',
+        title: fileName || "ملف",
+        text: description || "",
         url: window.location.href,
       })
       .catch((error) => {
-        console.log('خطأ في المشاركة:', error);
+        console.log("خطأ في المشاركة:", error);
       });
   } else {
-    alert('ميزة المشاركة غير مدعومة في هذا المتصفح');
+    alert("ميزة المشاركة غير مدعومة في هذا المتصفح");
   }
 };
 
-
-function getDrivePreviewLink(rawUrl: string): { embedUrl: string; originalUrl: string } {
+function getDrivePreviewLink(rawUrl: string): { embedUrl: string; originalUrl: string; fileId: string } {
   let fileId = "";
 
   const filePattern = /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)(?:\/view)?(?:\?.*)?/;
@@ -45,16 +45,16 @@ function getDrivePreviewLink(rawUrl: string): { embedUrl: string; originalUrl: s
     return {
       embedUrl: `https://drive.google.com/file/d/${fileId}/preview`,
       originalUrl: `https://drive.google.com/file/d/${fileId}/view`,
+      fileId,
     };
   }
 
   return {
     embedUrl: "",
     originalUrl: rawUrl,
+    fileId: "",
   };
 }
-
-
 
 function getDirectDownloadLink(url: string): string {
   const driveFileRegex = /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\//;
@@ -65,12 +65,12 @@ function getDirectDownloadLink(url: string): string {
   return url;
 }
 
-
 const PreviewFile: React.FC = () => {
   const [embedUrl, setEmbedUrl] = useState<string>("");
   const [originalUrl, setOriginalUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [fileId, setFileId] = useState<string>(""); // ✅ أضفنا state للـ fileId
   const [fileName, setFileName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [createdAt, setCreatedAt] = useState<string>("");
@@ -93,9 +93,10 @@ const PreviewFile: React.FC = () => {
         setCreatedAt(data.created_at || "");
 
         if (data.file_url) {
-          const { embedUrl, originalUrl } = getDrivePreviewLink(data.file_url);
+          const { embedUrl, originalUrl, fileId } = getDrivePreviewLink(data.file_url);
           setEmbedUrl(embedUrl);
           setOriginalUrl(originalUrl);
+          setFileId(fileId); // ✅ خزنا fileId
         }
       } catch (error) {
         console.error("Error fetching file details:", error);
@@ -130,17 +131,17 @@ const PreviewFile: React.FC = () => {
     <>
       <Header />
       <div className="max-w-3xl md:mx-auto mx-4 mt-6" dir="rtl">
-      <Link
-      href="/"
-      className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-200"
-     >
-      <FaHome />
-      العودة إلى الصفحة الرئيسية
-    </Link>
-  </div>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-200"
+        >
+          <FaHome />
+          العودة إلى الصفحة الرئيسية
+        </Link>
+      </div>
 
       <div className="max-w-3xl md:mx-auto mx-4 mt-10 space-y-6" dir="rtl">
-        {/* معلومات الملف تظهر دائماً */}
+        {/* معلومات الملف */}
         <div
           className={`p-4 border rounded-lg bg-white shadow-md ${
             embedUrl ? "border-green-200 hover:bg-green-50" : "border-yellow-300 bg-yellow-50"
@@ -174,44 +175,48 @@ const PreviewFile: React.FC = () => {
           )}
         </div>
 
-        {/* عرض المعاينة إن وُجد رابط صالح */}
+        {/* عرض المعاينة */}
         {embedUrl && (
           <div className="p-4 border border-green-200 rounded-lg bg-white shadow-md hover:bg-green-50 transition-colors duration-200">
             <div className="flex items-center justify-between mb-4">
+              <div className="flex gap-2">
+                <a
+                  href={originalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors duration-200"
+                >
+                  <FaExternalLinkAlt size={12} />
+                </a>
 
-        <div className="flex gap-2">
-            <a
-            href={originalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors duration-200"
-            >
-            <FaExternalLinkAlt size={12} />
-            {/* فتح في Google Drive */}
-            </a>
+                <button
+                  onClick={() => handleNativeShare(fileName, description)}
+                  className="flex items-center gap-1 px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200 transition-colors duration-200"
+                >
+                  <FaShareAlt size={14} />
+                </button>
 
-            <button
-            onClick={() => handleNativeShare(fileName, description)}
-            className="flex items-center gap-1 px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200 transition-colors duration-200"
-            >
-            <FaShareAlt size={14} />
-            {/* مشاركة */}
-            </button>
+                <a
+                  href={getDirectDownloadLink(originalUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center px-3 py-1 text-xs bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  download
+                >
+                  <FaDownload className="ml-1" size={12} />
+                </a>
 
-            <a
-              href={getDirectDownloadLink(originalUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center px-3 py-1 text-xs bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
-              onClick={e => e.stopPropagation()} // Prevent card click
-              onMouseDown={e => e.stopPropagation()}
-              download
-            >
-              <FaDownload className="ml-1" size={12} />
-            </a>
-        </div>
-        </div>
+                {/* ✅ الآن fileId معروف */}
+                <ReportProblem id={fileId} />
+              </div>
+            </div>
 
+            <div>
+              <p>قم بتقييم الملف :</p>
+              <Rating id={fileId} />
+            </div>
 
             <div className="relative w-full h-[600px] border rounded overflow-hidden">
               {loading && (
