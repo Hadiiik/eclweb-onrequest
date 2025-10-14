@@ -1,22 +1,28 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FaSpinner } from "react-icons/fa";
 import setAdminToken from "./set-admin-token";
 
-
 const InviteAdminPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-useEffect(() => {
-    // استدعاء Server Action ثم التوجيه بعد 2 ثانية
-    setAdminToken().then(() => {
+  useEffect(() => {
+    const inviteToken = searchParams.get("invite_token");
+
+    if (inviteToken) {
+      const formData = new FormData();
+      formData.append("invite_token", inviteToken);
+
+      setAdminToken(formData).then(() => {
         setTimeout(() => {
-            router.push("/dashboard");
+          router.push("/dashboard");
         }, 2000);
-    });
-}, []);
+      });
+    }
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50 px-4" dir="rtl">

@@ -19,6 +19,7 @@ export function sanitizeInput(input: string): string {
 
     // Remove any remaining suspicious patterns
     sanitized = sanitized.replace(/(script|iframe|object|embed|applet|link|style|form|meta|img|svg)/gi, '');
+    sanitized = sanitized.replace(",","")
 
     return sanitized.trim();
 }

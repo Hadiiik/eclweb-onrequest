@@ -34,7 +34,7 @@ function extractEducationalFilters(query: string): string[] {
     }
 
     if(hasBacWord&&hasScientific||hasScientific) extraFilters.push("بكلوريا علمي");
-    if(hasBacWord&&hasLiterary||hasLiterary) extraFilters.push("بكلوريا ادبي");
+    if(hasBacWord&&hasLiterary||hasLiterary) extraFilters.push("بكلوريا أدبي");
 
     if (hasTase3) {
         extraFilters.push("تاسع");
@@ -90,6 +90,7 @@ export async function POST(req: NextRequest) {
 
     const req_body: SearchQyery = await req.json();
     let search_bar_query = sanitizeInput(req_body.search_bar_query);
+    console.log(search_bar_query)
 
     search_bar_query = search_bar_query
         .split(/\s+/)
@@ -152,6 +153,7 @@ export async function POST(req: NextRequest) {
         query.or(f);  // إذا كانت f تحتوي على شروط، نضيفها للاستعلام
     }
     query.contains("categories", filters);
+    console.log(filters)
 
     const { data, error } = await query;
 
