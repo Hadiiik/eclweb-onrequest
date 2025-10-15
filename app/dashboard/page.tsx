@@ -1,7 +1,7 @@
 
 
 import Link from "next/link";
-import { FiUpload, FiSearch } from "react-icons/fi";
+import { FiUpload, FiSearch , FiPlus} from "react-icons/fi";
 import { FaFileAlt } from "react-icons/fa";
 import Header from "../components/Header";
 import { supabase } from "@/lib/supabase";
@@ -44,6 +44,12 @@ const Dashboard = async () => {
           <div className="bg-green-50 border border-green-200 hover:border-green-400 rounded-lg p-5 shadow-sm hover:shadow-md transition cursor-pointer text-center">
             <FiSearch size={24} className="mx-auto text-green-600 mb-2" />
             <span className="text-green-800 font-semibold text-lg">البحث وتعديل الملفات</span>
+          </div>
+        </Link>
+        <Link href="dashboard/AddNews" className="block">
+          <div className="bg-green-50 border border-green-200 hover:border-green-400 rounded-lg p-5 shadow-sm hover:shadow-md transition cursor-pointer text-center">
+            <FiPlus size={24} className="mx-auto text-green-600 mb-2" />
+            <span className="text-green-800 font-semibold text-lg">اضافة اخبار</span>
           </div>
         </Link>
 
