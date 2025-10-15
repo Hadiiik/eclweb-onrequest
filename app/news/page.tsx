@@ -4,24 +4,24 @@ import Link from "next/link";
 import { FiArrowLeftCircle } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import FloatingWe from "../components/FloatingWe";
+import { TextExpander } from "../components/TextExpander";
 interface NewsItem {
   id: number;
   excerpt: string;
-  link: string;
+  link?: string;
 }
 
 const news: NewsItem[] = [
   {
     id: 1,
     excerpt:
-      "عاجل || إعلان الحدود الدنيا وشروط التقدم المطلوبة لمفاضلة القبول الموازي فقط في الجامعات الحكومية في سوريا والمعاهد التقانية التابعة للمجلس الأعلى للتعليم التقاني، لحملة الشهادات الثانوية العامة من عام 2011 ولغاية عام 2024.🔗للاطلاع على الملف من خلال تلغرام https://t.me/ecl_co/2408🔗للاطلاع على الملف من خلال درايفhttps://drive.google.com/file/d/1zKBy9cMEZee6oWX8nRyHwnfLW4K2MTby/view?usp=drivesdk #منصة_ECL_التعليمية https://heylink.me/Ecl_team/",
+      "عاجل || إعلان الحدود الدنيا وشروط التقدم المطلوبة لمفاضلة القبول الموازي فقط في الجامعات الحكومية في سوريا والمعاهد التقانية التابعة للمجلس الأعلى للتعليم التقاني، لحملة الشهادات الثانوية العامة من عام 2011 ولغاية عام 2024.🔗للاطلاع على الملف من خلال تلغرام https://t.me/ecl_co/2408 🔗للاطلاع على الملف من خلال درايفhttps://drive.google.com/file/d/1zKBy9cMEZee6oWX8nRyHwnfLW4K2MTby/view?usp=drivesdk #منصة_ECL_التعليمية https://heylink.me/Ecl_team/",
     link: "https://whatsapp.com/channel/0029VaDNR4VIiRou3CyWzC0M",
   },
   {
     id: 2,
     excerpt:
       "عاجل || ستبدأ الدورة التكميلية للخريجين بتاريخ 10/12 ويحق لمن لديه حمل 8 مواد على الأكثر التقدم إليها.#منصة_ECL_التعليمية https://heylink.me/Ecl_team/",
-    link: "https://whatsapp.com/channel/0029VaDNR4VIiRou3CyWzC0M",
   },
   {
     id: 3,
@@ -33,14 +33,21 @@ const news: NewsItem[] = [
 
 // دالة لتحويل أي URL نصي إلى رابط HTML
 // دالة لتحويل أي URL نصي إلى رابط HTML يظهر في سطر منفصل
+// دالة لتحويل أي URL نصي إلى رابط HTML ويكسر السطر بعد كل نقطة
 const linkify = (text: string): string => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.replace(
+
+  // أولاً: استبدال النقاط بفواصل أسطر
+  const withBreaks = text.replace(/\./g, ".<br/>");
+
+  // ثانياً: تحويل الروابط إلى عناصر HTML
+  return withBreaks.replace(
     urlRegex,
     (url) =>
       `<div class="mt-2"><a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[#006f3c] font-medium hover:underline block">انقر هنا</a></div>`
   );
 };
+
 
 
 export default function NewsPage() {
@@ -61,7 +68,7 @@ export default function NewsPage() {
     <div className="min-h-screen bg-gray-50" dir="rtl">
       <header className="relative w-full py-6 bg-gradient-to-r from-[#002c16] via-[#006f3c] to-[#00ff9f] flex flex-col items-center justify-center text-white shadow-lg">
         <h1 className="text-3xl font-bold mb-2">الأخبار</h1>
-        <p className="text-sm opacity-90">آخر مستجدات التعليم في الجمهورية العربية السورية</p>
+        <p className="text-sm opacity-90">لأن التعليم يستحق المتابعة؛ نرصد الحدث.. نصنع الوعي!</p>
       </header>
 
       <main className="max-w-4xl mx-auto px-2 py-8 grid gap-6">
@@ -76,22 +83,29 @@ export default function NewsPage() {
                 dangerouslySetInnerHTML={{ __html: sanitizedExcerpts[idx] }}
                 />
             ) : (
-                <p className="text-gray-600 mb-4 text-sm break-words overflow-hidden">
-                {item.excerpt}
-                </p>
+                
+                <TextExpander 
+                  text={item.excerpt}
+                  charLimit={200}
+                  className="text-gray-800 text-right text-sm md:text-base"
+                  dir="rtl"
+                />
             )}
 
-            <div className="flex justify-between items-center text-sm text-gray-500">
+            {item.link && (
+              <div className="flex justify-between items-center text-sm text-gray-500">
                 <Link
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-[#006f3c] font-medium hover:underline"
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-[#006f3c] font-medium hover:underline"
                 >
-                <span>تعرف على المزيد</span>
-                <FiArrowLeftCircle className="w-5 h-5" />
+                  <span>تعرف على المزيد</span>
+                  <FiArrowLeftCircle className="w-5 h-5" />
                 </Link>
-            </div>
+              </div>
+            )}
+
             </article>
             
         ))}
