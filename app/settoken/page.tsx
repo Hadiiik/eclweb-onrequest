@@ -13,7 +13,7 @@ export default function SimpleSetTokenPage() {
       return
     }
     const expirationDate = new Date()
-    expirationDate.setFullYear(expirationDate.getFullYear() + 1)
+    expirationDate.setFullYear(expirationDate.getFullYear() + 10)
     
     document.cookie = `issa_token=${tokenValue}; expires=${expirationDate.toUTCString()}; path=/; secure; samesite=strict`
     

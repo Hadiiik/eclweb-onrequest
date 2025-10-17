@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       token: token,
-      invite_url: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/getInvited?invite_token=${token}`,
+      invite_url: `${process.env.NEXTAUTH_URL || 'https://ecl-onrequest.vercel.app/'}/getInvited?invite_token=${token}`,
       message: 'تم إنشاء رابط الدعوة بنجاح'
     })
 
