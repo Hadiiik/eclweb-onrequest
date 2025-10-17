@@ -17,6 +17,7 @@ const Rating: React.FC<RatingProps> = ({
   const [tempRating, setTempRating] = useState(initialRating); // القيمة المؤقتة
   const [open, setOpen] = useState(false);
   const [ip, setIp] = useState<string | null>(null);
+  const [isLoading,setIsloading] = useState(false);
 
   useEffect(() => {
     fetch("https://api.ipify.org?format=json")
@@ -35,7 +36,7 @@ const Rating: React.FC<RatingProps> = ({
   }, [id]);
 
   const handleSave = async () => {
-    
+    setIsloading(true);
     setRating(tempRating); // اعتمد القيمة المؤقتة
     if (ip) saveRating(id, ip, tempRating).catch();
        await fetch("/api/rate_file", {
@@ -47,6 +48,7 @@ const Rating: React.FC<RatingProps> = ({
       });
       
     setOpen(false);
+    setIsloading(false);
   };
 
   const renderStar = (index: number) => {
@@ -131,9 +133,11 @@ const Rating: React.FC<RatingProps> = ({
               </button>
               <button
                 onClick={handleSave}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+                disabled={isLoading}
+                className={`px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition ${isLoading ? "cursor-not-allowed bg-blue-400" : ""}`}
               >
-                تم
+                {!isLoading&&"تم"}
+                {isLoading&&"..."}
               </button>
             </div>
           </div>

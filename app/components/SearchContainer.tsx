@@ -64,7 +64,6 @@ const SearchContainer = () => {
     if (storedResults) {
       const parsedResults = JSON.parse(storedResults);
       setResult(parsedResults);
-      // console.log(results)
     }
   }, []);
 
@@ -119,7 +118,6 @@ const SearchContainer = () => {
     }));
     
     const sortedData = rankBySimilarity(formattedData, q);
-    // console.log(sortedData)
     setResult(sortedData);
 
     sessionStorage.setItem("searchResults", JSON.stringify(formattedData));

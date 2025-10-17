@@ -15,8 +15,7 @@ const handleNativeShare = (fileName: string, description: string) => {
         text: description || "",
         url: window.location.href,
       })
-      .catch((error) => {
-        console.log("خطأ في المشاركة:", error);
+      .catch(() => {
       });
   } else {
     alert("ميزة المشاركة غير مدعومة في هذا المتصفح");

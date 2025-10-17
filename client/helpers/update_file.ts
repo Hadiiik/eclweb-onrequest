@@ -65,7 +65,6 @@ export async function updateFileInfo(fileInfo: FileInfo): Promise<UploadResponse
       fileInfo.file_description += ` ${filter}`;
     }
   }
-  console.log(fileInfo)
 
   const delay = Math.random() * 3000;
   await new Promise(resolve => setTimeout(resolve, delay));

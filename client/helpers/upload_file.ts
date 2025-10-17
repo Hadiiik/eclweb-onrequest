@@ -54,7 +54,6 @@ function extractCategoriesFromFileName(fileName: string): string[] {
 }
 
 export async function uploadFileInfo(fileInfo: FileInfo): Promise<UploadResponse> {
-  console.log(fileInfo.categories)
   // نضيف التصنيفات المستخرجة من اسم الملف لمصفوفة التصنيفات مع إزالة التكرار
   const extractedCategories = extractCategoriesFromFileName(fileInfo.file_name);
   fileInfo.categories = Array.from(new Set([...fileInfo.categories, ...extractedCategories]));
@@ -66,7 +65,6 @@ export async function uploadFileInfo(fileInfo: FileInfo): Promise<UploadResponse
       fileInfo.file_description += ` ${filter}`;
     }
   }
-  console.log(fileInfo)
 
   const delay = Math.random() * 3000;
   await new Promise(resolve => setTimeout(resolve, delay));

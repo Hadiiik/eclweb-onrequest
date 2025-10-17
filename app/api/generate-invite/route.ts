@@ -10,7 +10,6 @@ export async function GET(req: NextRequest) {
     if (rateLimitResponse) return rateLimitResponse;
     const cookies = req.cookies;
     const adminToken = cookies.get("issa_token")?.value;
-    console.log("Admin Token:", adminToken);
     if (!adminToken) {
         return new Response("Unauthorized", { status: 401 });
     }
@@ -28,7 +27,7 @@ export async function GET(req: NextRequest) {
     const token = generateToken()
     
     // إضافة التوكن إلى قاعدة البيانات
-    const { data, error } = await supabase
+    const {  error } = await supabase
       .from('invite_tokens')
       .insert([
         {

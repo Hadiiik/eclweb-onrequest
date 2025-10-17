@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { FiSend, FiArrowLeftCircle } from "react-icons/fi";
+import { FiSend, FiArrowLeftCircle ,FiLoader} from "react-icons/fi";
 import Link from "next/link";
 
 export default function NewsInputPage() {
   const [excerpt, setExcerpt] = useState("");
   const [link, setLink] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading,setIsloading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    setIsloading(true);
     e.preventDefault();
 
     if (!excerpt.trim()) {
@@ -18,11 +20,12 @@ export default function NewsInputPage() {
     }
 
     // يمكنك لاحقاً هنا إرسال البيانات إلى قاعدة البيانات أو API
-    console.log({ excerpt, link: link.trim() || null });
+     await fetch("/api/nesw/add-news", { method: "POST", body: JSON.stringify({ excerpt: excerpt, link: link.trim() || null }) })
 
     setMessage("✅ تم إضافة الخبر بنجاح!");
     setExcerpt("");
     setLink("");
+    setIsloading(false)
   };
 
   return (
@@ -70,11 +73,22 @@ export default function NewsInputPage() {
 
           <button
             type="submit"
-            className="mt-2 bg-gradient-to-r from-[#002c16] via-[#006f3c] to-[#00ff9f] text-white font-semibold rounded-xl py-3 flex justify-center items-center gap-2 hover:opacity-90 transition"
+            disabled={isLoading}
+            className={`mt-2 bg-gradient-to-r from-[#002c16] via-[#006f3c] to-[#00ff9f] text-white font-semibold rounded-xl py-3 flex justify-center items-center gap-2 transition ${
+              isLoading ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"
+            }`}
           >
-            
-            إضافة الخبر
-            <FiSend className="w-5 h-5" />
+            {isLoading ? (
+              <>
+                جاري الإرسال...
+                <FiLoader className="w-5 h-5 animate-spin" />
+              </>
+            ) : (
+              <>
+                إضافة الخبر
+                <FiSend className="w-5 h-5" />
+              </>
+            )}
           </button>
 
           <Link

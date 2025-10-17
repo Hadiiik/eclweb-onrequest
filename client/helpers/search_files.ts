@@ -85,7 +85,6 @@ export async function fetchSearchResults(query: SearchQuery): Promise<SearchResp
 
   const delay = Math.random() * 3000;
   await new Promise(resolve => setTimeout(resolve, delay));
-  console.log(processedQuery)
   try {
     const response = await fetch('/api/files/search', {
       method: 'POST',

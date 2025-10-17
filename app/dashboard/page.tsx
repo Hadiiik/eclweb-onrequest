@@ -46,7 +46,7 @@ const Dashboard = async () => {
             <span className="text-green-800 font-semibold text-lg">البحث وتعديل الملفات</span>
           </div>
         </Link>
-        <Link href="dashboard/AddNews" className="block">
+        <Link href="/add-news" className="block">
           <div className="bg-green-50 border border-green-200 hover:border-green-400 rounded-lg p-5 shadow-sm hover:shadow-md transition cursor-pointer text-center">
             <FiPlus size={24} className="mx-auto text-green-600 mb-2" />
             <span className="text-green-800 font-semibold text-lg">اضافة اخبار</span>
