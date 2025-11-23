@@ -13,7 +13,7 @@ const getLastHundredNews = async () =>{
   return { data, error };
 }
 
-export const revalidate = 3600; // كل 10 دقائق (يمكنك تغيير الرقم حسب حاجتك)
+export const revalidate = 600; // كل 10 دقائق (يمكنك تغيير الرقم حسب حاجتك)
 
 const page = async () => {
   const { data, error } = await getLastHundredNews();
