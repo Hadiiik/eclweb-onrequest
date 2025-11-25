@@ -4,8 +4,8 @@
   "description": "educational creative link",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#bbf7d0",
-  "theme_color": "#16a34a",
+  "background_color": "#ffffff",
+  "theme_color": "#128d3f",
   "icons": [
     {
       "src": "/icon-192x192.png",
@@ -18,5 +18,16 @@
       "type": "image/png"
     }
   ],
-  "lang": "ar"
+  "lang": "ar",
+  "categories": [
+    "books",
+    "education"
+  ],
+  "shortcuts": [
+    {
+      "name": "الأخبار",
+      "url": "/news",
+      "description": "لأن التعليم يستحق المتابعة؛ نرصد الحدث.. نصنع الوعي!"
+    }
+  ]
 }
