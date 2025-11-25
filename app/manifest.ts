@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "educational creative link",
     start_url: '/',
     display: 'standalone',
-    background_color: '#bbf7d0',
-    theme_color: '#16a34a',
+    background_color: '#f0fdf4',
+    theme_color: '#166534',
     icons: [
       {
         src: '/icon-192x192.png',

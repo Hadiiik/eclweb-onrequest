@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Kufi_Arabic } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
+// @ts-ignore - allow side-effect import of global CSS without a type declaration file
 import "./globals.css";
+import DisableContextMenu from "./components/disable-context-menu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +31,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="ar">
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -40,6 +43,7 @@ export default function RootLayout({
         </div> */}
         {children}
         <Analytics />
+        <DisableContextMenu/>
       </body>
     </html>
   );
