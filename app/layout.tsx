@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Kufi_Arabic } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
-// @ts-ignore - allow side-effect import of global CSS without a type declaration file
 import "./globals.css";
 import DisableContextMenu from "./components/disable-context-menu";
 
